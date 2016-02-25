@@ -11,7 +11,7 @@
 	<div class="col-sm-6" style="height:75px;">
 	   <div class='col-md-5'>
 			<div class="form-group">
-				<div>Start</div>
+				<div>Check-in Date</div>
 				
 				<div class='input-group date' id='startDate'>
 					<input name='startDate' type='text' class="form-control" />
@@ -22,7 +22,7 @@
 		</div>
 		<div class='col-md-5'>
 			<div class="form-group">
-				<div>End</div>
+				<div>Check-out Date</div>
 				
 				<div class='input-group date' id='endDate'>
 					<input name='endDate' type='text' class="form-control" />

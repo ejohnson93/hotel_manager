@@ -15,9 +15,25 @@
 
  <ul class="nav-bar">
   <li><a href="CustomerHomePage.jsp">Home</a></li>
+   <% Cookie[] cookies = request.getCookies();
+   Cookie cookie = null;
+   if( cookies != null ){
+	for (int i = 0; i < cookies.length; i++){
+		cookie = cookies[i];
+		if (cookie.getName().equals("login")) {
+			break;
+		}
+	}
+   if (cookie != null && cookie.getValue().equals("true")) { %>
   <li><a href="ManageReservations.jsp">Manage Reservations</a></li>
+  <% } %>
   <ul style="float:right;list-style-type:none;">
-    <li><a href="login.jsp">Logout</a></li>
+  <% if (cookie != null && cookie.getValue().equals("true")) { %>
+    <li><a href="Login">Logout</a></li>
+    <%} else { 
+    %>
+    	<li><a href="Login">Login</a></li>
+    <% }}	%>
   </ul>
 </ul>
 <br>

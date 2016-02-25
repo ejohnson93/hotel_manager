@@ -3,10 +3,12 @@ package servlets;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,8 +31,12 @@ public class Login extends HttpServlet {
     
     Properties prop = new Properties();
     String propFilePath;
+    Date serverStartDate = null;
     
     public void init () throws ServletException {
+    	
+    	serverStartDate = new Date();
+    	
 		FileInputStream fis = null;
 		ServletContext sc = this.getServletContext();
 		/* Store the user.properties file in the WEB-INF directory.
@@ -67,7 +73,8 @@ public class Login extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		Cookie cookie = new Cookie("login", "false");
+		response.addCookie(cookie);
 		response.sendRedirect("login.jsp");
 			
 	}
@@ -85,15 +92,19 @@ public class Login extends HttpServlet {
 	    VALIDATE v = user.validateUser(prop);
 
 		if(v == VALIDATE.VALID) {
-			response.sendRedirect("Welcome.jsp");
-		} else /*if (v == VALIDATE.INVALID) */{
-			request.setAttribute("errorMessage", "Invalid username or password, please try again or click \"Register\" to create a new account!"); 
+			Cookie login = new Cookie("login", "true");
+			response.addCookie(login);
+			response.sendRedirect("CustomerHomePage.jsp");
+			return;
+		} else if (v == VALIDATE.INVALID) {
+			request.setAttribute("errorPass", "Invalid password, please try again!"); 
             request.getRequestDispatcher("login.jsp").forward( request, response);
             return;
-			//response.sendRedirect("login.jsp");
-		} /*else {
-			response.sendRedirect("register.jsp");
-		}*/
+		} else {
+			request.setAttribute("errorUser", "Username not found, please try again or click \"Register\" to create a new account!"); 
+            request.getRequestDispatcher("login.jsp").forward( request, response);
+            return;
+		}
 	}
 
 }
