@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import utilities.DatabaseManager;
+
 import models.User;
 
 /**
@@ -48,7 +50,7 @@ public class Register extends HttpServlet {
 		/* Store the user.properties file in the WEB-INF directory.
 		   Relative path is converted into the absolute path. */
 		propFilePath = sc.getRealPath("/WEB-INF/users.properties");
-		
+	/*	
 		try{
 			fis = new FileInputStream(propFilePath);
 	
@@ -73,7 +75,7 @@ public class Register extends HttpServlet {
 		            e.printStackTrace();
 		        }
 		    }
-		}
+		}*/
     }
     
 
@@ -93,6 +95,8 @@ public class Register extends HttpServlet {
 		String pass = request.getParameter("password");
 		String mismatch = request.getParameter("matching");
 		
+		DatabaseManager dbManager = new DatabaseManager();
+		
 		User user = new User(name, pass);
 		
 		if (name.isEmpty() || name == null || pass == null || pass.isEmpty() || mismatch == null || mismatch.isEmpty()) {
@@ -106,7 +110,7 @@ public class Register extends HttpServlet {
 	            return;
 			}
 			else if (mismatch.equals("matching")){
-				boolean success = user.addUser(prop, propFilePath);
+				boolean success = dbManager.addUser(user);
 				
 				if (success) {
 					loadProp();
