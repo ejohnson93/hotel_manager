@@ -1,24 +1,32 @@
 package utilities;
 
 import models.*;
+import models.User.VALIDATE;
 
 import java.sql.*;
 import java.util.List;
 
 public class DatabaseManager {
 	
-	private Connection conn = null;
-	private PreparedStatement ps = null;
-	private String user = "ejohnson";
-	private String pass = "hz8EyQ";
-	private String dbUrl = "cse.unl.edu";
+//private static final String DB_DRIVER = "com.mysql.jdbc.Driver";
+	private final String DB_CONNECTION = "jdbc:mysql://cse.unl.edu:3306/ejohnson";
+	private static final String DB_USER = "ejohnson";
+	private static final String DB_PASSWORD = "hz8EyQ";
+	
+	public DatabaseManager(){
+		
+	}
 	
 	List<Hotel> getAllHotels(){
 		
 		List<Hotel> hotels = null;
 		
+		Connection conn = null;
+		
+		PreparedStatement ps = null; 
+		
 		try{
-			conn = DriverManager.getConnection(dbUrl,user,pass);
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
 			
 			//Get the hotels
 			String query = "SELECT * FROM Hotels";
@@ -125,15 +133,31 @@ public class DatabaseManager {
 				hotels.add(h);
 				
 			}
-			
-			
-		
+				
 			rs.close();
-			ps.close();
-			conn.close();
+
 		}catch(Exception e){
 			
 			e.printStackTrace();
+			
+		}finally{
+			
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 		}
 		return hotels;
@@ -144,8 +168,12 @@ public class DatabaseManager {
 		
 		List<Amenity> amenities = null;
 		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
 		try{
-			conn = DriverManager.getConnection(dbUrl,user,pass);
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
 		
 			String query = "SELECT * FROM Amenities";
 		
@@ -163,13 +191,32 @@ public class DatabaseManager {
 			}
 		
 			rs.close();
-			ps.close();
-			conn.close();
+			
 		}catch(Exception e){
 			
 			e.printStackTrace();
 			
+		}finally{
+			
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
+			
 		return amenities;
 		
 	}
@@ -178,8 +225,12 @@ public class DatabaseManager {
 		
 		List<HotelReview> hotelReviews = null;
 		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
 		try{
-			conn = DriverManager.getConnection(dbUrl,user,pass);
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
 		
 			String query = "SELECT * FROM HotelReviews";
 	
@@ -201,11 +252,28 @@ public class DatabaseManager {
 			}
 			
 			rs.close();
-			ps.close();
-			conn.close();
 		
 		}catch(Exception e){
 			e.printStackTrace();
+		}finally{
+			
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 		
 		return hotelReviews;
@@ -214,6 +282,59 @@ public class DatabaseManager {
 	//Create Get all Room Types.
 	//PUT FUNCTION HERE
 	
+	List<HotelRoomType> getAllRoomTypes(){
+		
+		List<HotelRoomType> roomTypes = null;
+		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		try{
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+		
+			String query = "SELECT * FROM HotelRoomType";
+	
+			ps = conn.prepareStatement(query);
+	
+			ResultSet rs = ps.executeQuery();	
+	
+			while(rs.next()){
+				
+				HotelRoomType r = new HotelRoomType();
+				r.setId(rs.getInt("Id"));
+				r.setDescription(rs.getString("Description"));
+				r.setRoomType(rs.getString("RoomType"));
+				roomTypes.add(r);
+			}
+			
+			rs.close();
+		
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		return roomTypes;
+		
+	}
 	
 	//Need to create search to search hotels based on:
 	//Check in date
@@ -223,4 +344,126 @@ public class DatabaseManager {
 	//Room Type
 	//Amenities
 	//PUT FUNCTION HERE
+	
+	//TODO: Create getUserFuction
+	
+	public boolean addUser(User u){
+		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		boolean success = false;
+		
+		try{
+		//	Class.forName(DB_DRIVER);
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+		
+			String insert = "INSERT INTO Users" +
+							"(Username, Password) VALUES" + 
+							"(?, ?)";
+			
+			ps = conn.prepareStatement(insert);
+			
+			ps.setString(1, u.getUsername());
+			ps.setString(2, u.getPassword());
+	
+			ps.executeUpdate();	
+			success = true;
+		
+		}catch(Exception e){
+			success = false;
+			e.printStackTrace();
+			System.out.println("Connection Error");
+		}finally{
+			
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return success;
+		
+		
+	}
+	
+	//TODO: Create validateUser
+	
+	public VALIDATE validateUser(User u){
+		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		String pass = null;
+		
+		try{
+			
+		//	Class.forName(DB_DRIVER);
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+		
+			String query = "SELECT * FROM Users" + 
+							"WHERE Username = ?";
+	
+			ps = conn.prepareStatement(query);
+			ps.setString(1, u.getUsername());
+	
+			ResultSet rs = ps.executeQuery();	
+			
+			pass = rs.getString("Password");
+
+			System.out.println(pass);
+			
+			rs.close();
+		
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		if(pass == null){
+			return VALIDATE.NOTFOUND;
+		}else{
+			
+			if(pass.equals(u.getPassword())){
+				return VALIDATE.VALID;
+			}else{
+				return VALIDATE.INVALID;
+			}
+			
+		}
+		
+	}
 }

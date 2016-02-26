@@ -24,7 +24,7 @@ public class User {
 	}
 	
 	public enum VALIDATE {VALID, INVALID, NOTFOUND;}
-	
+	/*
 	public boolean addUser(Properties prop, String propFilePath) throws FileNotFoundException, IOException
 	{
 		String password = prop.getProperty(this.username);
@@ -62,7 +62,7 @@ public class User {
 	    }
 		
 	 }
-
+*/
 	public String getFirstName() {
 		return firstName;
 	}

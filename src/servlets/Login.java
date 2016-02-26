@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import models.User;
 import models.User.VALIDATE;
+import utilities.*;
 
 /**
  * Servlet implementation class Login
@@ -42,6 +43,7 @@ public class Login extends HttpServlet {
 		/* Store the user.properties file in the WEB-INF directory.
 		   Relative path is converted into the absolute path. */
 		propFilePath = sc.getRealPath("/WEB-INF/users.properties");
+		/*
 		try{
 			fis = new FileInputStream(propFilePath);
 
@@ -66,7 +68,7 @@ public class Login extends HttpServlet {
 		            e.printStackTrace();
 		        }
 		    }
-		}
+		}*/
     }
 
 	/**
@@ -88,8 +90,12 @@ public class Login extends HttpServlet {
 		String pass = request.getParameter("password");
 		
 		User user = new User(name, pass);
+		
+		DatabaseManager dbManager = new DatabaseManager();
+		
+		VALIDATE v = dbManager.validateUser(user);
 
-	    VALIDATE v = user.validateUser(prop);
+	    //VALIDATE v = user.validateUser(prop);
 
 		if(v == VALIDATE.VALID) {
 			Cookie login = new Cookie("login", "true");
