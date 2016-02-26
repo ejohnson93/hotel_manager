@@ -592,4 +592,67 @@ public class DatabaseManager {
 	
 	//TODO: Create updateHotelReservation
 	
+	public void updateHotelReservation(HotelReservation r){
+
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		try{
+			
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+		
+			String update = "UPDATE HotelReservation SET" + 
+							"HotelId = ?, " +
+							"CheckInDate = ?, " +
+							"CheckOutDate = ?, " +
+							"NumberOfRooms = ?, " +
+							"ReservationNumber = ?, " + 
+							"UserId = ?, " + 
+							"Status = ?, " +
+							"Notes = ?, " + 
+							"RoomTypeId = ? " + 
+							"WHERE Id = ?";
+	
+			ps = conn.prepareStatement(update);
+			ps.setInt(1, r.getHotelId());
+			ps.setDate(2, (Date) r.getCheckInDate());
+			ps.setDate(3, (Date) r.getCheckOutDate());
+			ps.setInt(4, r.getNumRooms());
+			ps.setString(5, r.getReservationNum());
+			ps.setInt(6, r.getUserId());
+			ps.setInt(7, r.getStatus());
+			ps.setString(8, r.getNotes());
+			ps.setInt(9, r.getRoomType().getId());
+			ps.setInt(10, r.getId());
+
+	
+			ps.executeUpdate();	
+		
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		
+	}
+	
 }
