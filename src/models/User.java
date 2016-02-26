@@ -3,9 +3,11 @@ package models;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 public class User {
+	private int id;
 	private String username;
 	private String password;
 	private String firstName;
@@ -17,6 +19,7 @@ public class User {
 	private String postalCode;
 	private int type;
 	private int status;
+	private List<CreditCard> creditCards;
 	
 	public User(String username, String password){
 		this.setUsername(username);
@@ -63,6 +66,15 @@ public class User {
 		
 	 }
 */
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getId() {
+		return id;
+	}
+	
 	public String getFirstName() {
 		return firstName;
 	}
@@ -149,6 +161,29 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public List<CreditCard> getAllCreditCards(){
+		
+		return this.creditCards;
+		
+	}
+	public void addCreditCard(CreditCard c){
+		
+		this.creditCards.add(c);
+		
+	}
+	public void removeCreditCard(int id){
+		
+		for(CreditCard c: this.creditCards){
+			if(c.getId() == id){
+				this.creditCards.remove(c);
+			}
+		}
+		
+	}
+	public void removeCreditCard(CreditCard c){
+		this.creditCards.remove(c);
 	}
 
 }
