@@ -466,4 +466,130 @@ public class DatabaseManager {
 		}
 		
 	}
+	
+	public void updateUser(User u){
+		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		try{
+			
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+		
+			String update = "UPDATE Users SET" + 
+							"FirstName = ?, " +
+							"LastName = ?, " +
+							"AddressLine1 = ?, " +
+							"AddressLine2 = ?, " +
+							"City = ?, " + 
+							"State = ?, " + 
+							"PostalCode = ?, " +
+							"Type = ?, " + 
+							"Status = ?, " + 
+							"Username = ?, " + 
+							"Password ? " + 
+							"WHERE Id = ?";
+	
+			ps = conn.prepareStatement(update);
+			ps.setString(1, u.getFirstName());
+			ps.setString(2, u.getLastName());
+			ps.setString(3, u.getAddressLine1());
+			ps.setString(4, u.getAddressLine2());
+			ps.setString(5, u.getCity());
+			ps.setString(6, u.getState());
+			ps.setString(7, u.getPostalCode());
+			ps.setInt(8, u.getType());
+			ps.setInt(9, u.getStatus());
+			ps.setString(10, u.getUsername());
+			ps.setString(11, u.getPassword());
+			ps.setInt(12, u.getId());
+	
+			ps.executeUpdate();	
+		
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+	}
+	
+	public void updateCreditCard(CreditCard c){
+		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		try{
+			
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+		
+			String update = "UPDATE CreditCards SET" + 
+							"CardholderName = ?, " +
+							"CreditCardNumber = ?, " +
+							"Balance = ?, " +
+							"CardNickname = ?, " +
+							"UserId = ?, " + 
+							"CVV = ? " + 
+							"WHERE Id = ?";
+	
+			ps = conn.prepareStatement(update);
+			ps.setString(1, c.getCardHolderName());
+			ps.setString(2, c.getCreditCardNumber());
+			ps.setDouble(3, c.getBalance());
+			ps.setString(4, c.getCardNickname());
+			ps.setInt(5, c.getUserId());
+			ps.setString(6, c.getcVV());
+			ps.setInt(7, c.getId());
+
+	
+			ps.executeUpdate();	
+		
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+	}
+	
+	//TODO: Create a addHotelReservation
+	
+	//TODO: Create updateHotelReservation
+	
 }
