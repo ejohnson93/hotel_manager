@@ -38,11 +38,11 @@ public class Login extends HttpServlet {
     	
     	serverStartDate = new Date();
     	
-		FileInputStream fis = null;
-		ServletContext sc = this.getServletContext();
+	//	FileInputStream fis = null;
+	//	ServletContext sc = this.getServletContext();
 		/* Store the user.properties file in the WEB-INF directory.
 		   Relative path is converted into the absolute path. */
-		propFilePath = sc.getRealPath("/WEB-INF/users.properties");
+	//	propFilePath = sc.getRealPath("/WEB-INF/users.properties");
 		/*
 		try{
 			fis = new FileInputStream(propFilePath);
