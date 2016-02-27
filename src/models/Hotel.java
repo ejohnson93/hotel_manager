@@ -14,6 +14,7 @@ public class Hotel {
 	private List<Amenity> amenities;
 	private List<HotelRoom> rooms;
 	private List<HotelReview> reviews;
+	private List<HotelReservation> reservations;
 	
 	public Hotel(){
 		
@@ -117,6 +118,11 @@ public class Hotel {
 		
 	}
 	
+	public List<HotelRoom> getAllHotelRooms(){
+		
+		return this.rooms;
+	}
+	
 	public void addReview(HotelReview review){
 		
 		this.reviews.add(review);
@@ -131,6 +137,29 @@ public class Hotel {
 		
 		for(HotelReview r: this.reviews){
 			if(r.getReviewerName().equals(name)){
+				return r;
+			}
+		}
+		return null;
+		
+	}
+	
+	public void addReservation(HotelReservation r){
+		
+		this.reservations.add(r);
+		
+	}
+	
+	public List<HotelReservation> getAllReservations(){
+		
+		return this.reservations;
+		
+	}
+	
+	public HotelReservation getReservationByResNum(String resNum){
+		
+		for(HotelReservation r: this.reservations){
+			if(r.getReservationNum().equals(resNum)){
 				return r;
 			}
 		}

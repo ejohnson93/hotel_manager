@@ -20,6 +20,7 @@ public class User {
 	private int type;
 	private int status;
 	private List<CreditCard> creditCards;
+	private List<HotelReservation> reservations;
 	
 	public User(String username, String password){
 		this.setUsername(username);
@@ -173,17 +174,20 @@ public class User {
 		this.creditCards.add(c);
 		
 	}
-	public void removeCreditCard(int id){
-		
-		for(CreditCard c: this.creditCards){
-			if(c.getId() == id){
-				this.creditCards.remove(c);
-			}
-		}
-		
+	
+	public boolean removeCreditCard(CreditCard c){
+		return this.creditCards.remove(c);
 	}
-	public void removeCreditCard(CreditCard c){
-		this.creditCards.remove(c);
+	
+	public void addReservation(HotelReservation h){
+		
+		this.reservations.add(h);
+	}
+	
+	public List<HotelReservation> getAllReservations(){
+		
+		return this.reservations;
+		
 	}
 
 }
