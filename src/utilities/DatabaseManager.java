@@ -45,9 +45,9 @@ public class DatabaseManager {
 				h.setNearestPoints(rs.getString("NearestPoints"));
 				h.setAddress(rs.getString("Address"));
 				
-				query = "SELECT * FROM Amenities AS a"+ 
-				"JOIN HotelAmenities AS ha ON a.Id = ha.AmenityId" + 
-				"JOIN Hotels AS h ON ha.HotelId = h.Id" + 
+				query = "SELECT * FROM Amenities AS a "+ 
+				"JOIN HotelAmenities AS ha ON a.Id = ha.AmenityId " + 
+				"JOIN Hotels AS h ON ha.HotelId = h.Id " + 
 				"WHERE h.Id =?";
 				
 				
@@ -66,10 +66,11 @@ public class DatabaseManager {
 					
 				}
 				
+				
 				//Get the hotel reviews for the hotel
 				
-				query = "SELECT * FROM HotelReviews AS r"+ 
-				"JOIN Hotels AS h ON r.HotelId = h.Id" + 
+				query = "SELECT * FROM HotelReviews AS r "+ 
+				"JOIN Hotels AS h ON r.HotelId = h.Id " + 
 				"WHERE h.Id =?";
 				
 				
@@ -83,9 +84,9 @@ public class DatabaseManager {
 					HotelReview r = new HotelReview();
 					r.setId(rs1.getInt("r.Id"));
 					r.setReviewerName(rs1.getString("r.ReviewerName"));
-					r.setReviewDate(rs.getDate("r.ReviewDate"));
-					r.setReview(rs.getString("r.Review"));
-					r.setHotelId(rs.getInt("r.HotelId"));
+					r.setReviewDate(rs1.getDate("r.ReviewDate"));
+					r.setReview(rs1.getString("r.Review"));
+					r.setHotelId(rs1.getInt("r.HotelId"));
 					
 					h.addReview(r);
 					
@@ -110,7 +111,7 @@ public class DatabaseManager {
 							"JOIN HotelRooms AS r ON t.Id = r.RoomTypeId" + 
 							"WHERE r.Id = ?";
 					ps = conn.prepareStatement(query);
-					ps.setInt(1, rs.getInt("r.Id"));
+					ps.setInt(1, rs1.getInt("r.Id"));
 					ResultSet rs2 = ps.executeQuery();
 					HotelRoomType rt = new HotelRoomType();
 					
@@ -127,8 +128,11 @@ public class DatabaseManager {
 					r.setRoomType(rt);
 					
 					h.addRoom(r);
+					rs2.close();
 					
 				}
+				
+				rs1.close();
 				
 				hotels.add(h);
 				
@@ -359,8 +363,8 @@ public class DatabaseManager {
 		//	Class.forName(DB_DRIVER);
 			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
 		
-			String insert = "INSERT INTO Users" +
-							"(Username, Password) VALUES" + 
+			String insert = "INSERT INTO Users " +
+							"(Username, Password) VALUES " + 
 							"(?, ?)";
 			
 			ps = conn.prepareStatement(insert);
@@ -416,7 +420,7 @@ public class DatabaseManager {
 		//	Class.forName(DB_DRIVER);
 			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
 		
-			String query = "SELECT * FROM Users" + 
+			String query = "SELECT * FROM Users " + 
 							"WHERE Username = ?";
 	
 			ps = conn.prepareStatement(query);
@@ -477,7 +481,7 @@ public class DatabaseManager {
 			
 			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
 		
-			String update = "UPDATE Users SET" + 
+			String update = "UPDATE Users SET " + 
 							"FirstName = ?, " +
 							"LastName = ?, " +
 							"AddressLine1 = ?, " +
@@ -542,7 +546,7 @@ public class DatabaseManager {
 			
 			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
 		
-			String update = "UPDATE CreditCards SET" + 
+			String update = "UPDATE CreditCards SET " + 
 							"CardholderName = ?, " +
 							"CreditCardNumber = ?, " +
 							"Balance = ?, " +
@@ -589,6 +593,73 @@ public class DatabaseManager {
 	}
 	
 	//TODO: Create a addHotelReservation
+	
+	public int addHotelReservation(HotelReservation h){
+		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		int newHotelReservationId = -1;
+		
+		try{
+
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+		
+			String insert = "INSERT INTO HotelReservations " +
+							"(HotelId, CheckInDate, CheckOutDate, " +
+							"NumberOfRooms, ReservationNumber, UserId, "+
+							"Status, Notes, RoomTypeId) VALUES " + 
+							"(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			
+			ps = conn.prepareStatement(insert);
+			
+			ps.setInt(1, h.getHotelId());
+			ps.setDate(2, (Date)h.getCheckInDate());
+			ps.setDate(3, (Date)h.getCheckOutDate());
+			ps.setInt(4, h.getNumRooms());
+			ps.setString(5, h.getReservationNum());
+			ps.setInt(6, h.getUserId());
+			ps.setInt(7, h.getStatus());
+			ps.setString(8, h.getNotes());
+			ps.setInt(9, h.getRoomType().getId());
+	
+			ps.executeUpdate();	
+			
+			String getId = "SELECT Id FROM HotelReservations " + 
+							"WHERE ReservationNumber = ?";
+			
+			ResultSet rs = ps.executeQuery(getId);
+			
+			newHotelReservationId = rs.getInt("Id");
+		
+		}catch(Exception e){
+			e.printStackTrace();
+			System.out.println("Connection Error");
+		}finally{
+			
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return newHotelReservationId;
+		
+	}
 	
 	//TODO: Create updateHotelReservation
 	
@@ -652,6 +723,203 @@ public class DatabaseManager {
 			
 		}
 		
+		
+	}
+	public void getHotelAmenities(Hotel h){
+		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		try{
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+		
+			String query = "SELECT * FROM Amenities AS a "+ 
+					"JOIN HotelAmenities AS ha ON a.Id = ha.AmenityId " + 
+					"JOIN Hotels AS h ON ha.HotelId = h.Id " + 
+					"WHERE h.Id =?";
+					
+					
+					ps = conn.prepareStatement(query);
+					ps.setInt(1, h.getId());
+					ResultSet rs = ps.executeQuery();
+					
+					
+					while(rs.next()){
+						
+						Amenity a = new Amenity();
+						a.setId(rs.getInt("a.Id"));
+						a.setName(rs.getString("a.Name"));
+						
+						h.addAmenity(a);
+						
+					}
+				
+			rs.close();
+			
+		}catch(Exception e){
+			
+			e.printStackTrace();
+			
+		}finally{
+			
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+			
+		
+	}
+	
+	public void getHotelHotelReviews(Hotel h){
+		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		try{
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+		
+			String query = "SELECT * FROM HotelReviews AS r "+ 
+					"JOIN Hotels AS h ON r.HotelId = h.Id " + 
+					"WHERE h.Id =?";
+					
+					
+					ps = conn.prepareStatement(query);
+					ps.setInt(1, h.getId());
+					ResultSet rs = ps.executeQuery();
+					
+					
+					while(rs.next()){
+						
+						HotelReview r = new HotelReview();
+						r.setId(rs.getInt("r.Id"));
+						r.setReviewerName(rs.getString("r.ReviewerName"));
+						r.setReviewDate(rs.getDate("r.ReviewDate"));
+						r.setReview(rs.getString("r.Review"));
+						r.setHotelId(rs.getInt("r.HotelId"));
+						
+						h.addReview(r);
+						
+					}
+				
+			rs.close();
+			
+		}catch(Exception e){
+			
+			e.printStackTrace();
+			
+		}finally{
+			
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+	}
+	
+	void getHotelHotelRooms(Hotel h){
+		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		try{
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+		
+			String query = "SELECT * FROM HotelRooms AS r"+ 
+					"JOIN Hotels AS h ON r.HotelId = h.Id" + 
+					"WHERE h.Id =?";
+					
+					ps = conn.prepareStatement(query);
+					ps.setInt(1, h.getId());
+					ResultSet rs = ps.executeQuery();
+					
+					
+					while(rs.next()){
+						
+						HotelRoom r = new HotelRoom();
+						
+						query = "SELECT * FROM HotelRoomType AS t"+
+								"JOIN HotelRooms AS r ON t.Id = r.RoomTypeId" + 
+								"WHERE r.Id = ?";
+						ps = conn.prepareStatement(query);
+						ps.setInt(1, rs.getInt("r.Id"));
+						ResultSet rs1 = ps.executeQuery();
+						HotelRoomType rt = new HotelRoomType();
+						
+						rt.setId(rs1.getInt("t.Id"));
+						rt.setRoomType(rs1.getString("RoomType"));
+						rt.setDescription(rs1.getString("Description"));
+						
+						r.setId(rs.getInt("r.Id"));
+						r.setHotelId(rs.getInt("r.HotelId"));
+						r.setAvailableNum(rs.getInt("r.AvailableNumber"));
+						r.setPricePerNight(rs.getDouble("r.PricePerNight"));
+						r.setStartDate(rs.getDate("r.StartDate"));
+						r.setEndDate(rs.getDate("r.EndDate"));
+						r.setRoomType(rt);
+						
+						h.addRoom(r);
+						rs1.close();
+						
+					}
+					
+					rs.close();
+
+			
+		}catch(Exception e){
+			
+			e.printStackTrace();
+			
+		}finally{
+			
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
 		
 	}
 	
