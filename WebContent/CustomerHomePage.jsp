@@ -6,7 +6,7 @@
 <t:layout>
     <h1>Welcome</h1>
     
-<form action="ReservationSearchResults.jsp" method="post">
+<form action="ReservationSearchQuery" method="post">
 <div class="container">
 	<div class="col-sm-6" style="height:75px;">
 	   <div class='col-md-5'>
@@ -48,19 +48,19 @@
 			<div class='form-group'>
 				<select name="roomType" value='' >
 					<option id='default' value='0' selected=''>Select Room Type</option>
-					<option value="1">Standard</option>
-					<option value="2">Family</option>
-					<option value="3">Suite</option>
+					<option value="Standard">Standard</option>
+					<option value="Family">Family</option>
+					<option value="Suite">Suite</option>
 				</select>
 			</div>
 		</div>
 		<div class='col-md-5'>
 			<div>Amenities</div>
 			<div class='form-group'>
-				<input type="checkbox" name="Amenities" value="bathtub">Bathtub in Room<br>
-				<input type="checkbox" name="Amenities" value="breakfast">Free breakfast<br>
-				<input type="checkbox" name="Amenities" value="wifi">Free Wi-Fi<br>
-				<input type="checkbox" name="Amenities" value="gym">Gym<br>
+				<input type="checkbox" name="Amenities" value="Bathtub">Bathtub in Room<br>
+				<input type="checkbox" name="Amenities" value="Breakfast">Free breakfast<br>
+				<input type="checkbox" name="Amenities" value="Wifi">Free Wi-Fi<br>
+				<input type="checkbox" name="Amenities" value="Gym">Gym<br>
 				<input type="checkbox" name="Amenities" value="internet">Paid Internet Access<br>
 				<input type="checkbox" name="Amenities" value="pool">Pool<br>
 				<input type="checkbox" name="Amenities" value="pet">Pet friendly 

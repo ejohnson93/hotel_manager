@@ -3,6 +3,7 @@ package models;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -25,6 +26,8 @@ public class User {
 	public User(String username, String password){
 		this.setUsername(username);
 		this.setPassword(password);
+		this.creditCards = new ArrayList<CreditCard>();
+		this.reservations = new ArrayList<HotelReservation>();
 	}
 	
 	public enum VALIDATE {VALID, INVALID, NOTFOUND;}
