@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Hotel {
@@ -17,7 +18,10 @@ public class Hotel {
 	private List<HotelReservation> reservations;
 	
 	public Hotel(){
-		
+		this.amenities = 	new ArrayList<Amenity>();
+		this.rooms = 		new ArrayList<HotelRoom>();
+		this.reviews = 		new ArrayList<HotelReview>();
+		this.reservations = new ArrayList<HotelReservation>();
 	}
 
 	public void setId(int id) {
@@ -103,7 +107,7 @@ public class Hotel {
 	}
 
 	public List<HotelRoom> getHotelRoomsByType(String roomType){
-		List<HotelRoom> roomList = null;
+		List<HotelRoom> roomList = new ArrayList<HotelRoom>();
 		for(HotelRoom r: this.rooms){
 			if(r.getRoomType().getRoomType().equals(roomType)){
 				roomList.add(r);

@@ -19,9 +19,20 @@
 		<servlet-name>Register</servlet-name>
 		<servlet-class>servlets.Register</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>ReservationSearchQuery</display-name>
+		<servlet-name>ReservationSearchQuery</servlet-name>
+		<servlet-class>servlets.ReservationSearchQuery</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>Register</servlet-name>
 		<url-pattern>/Register</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ReservationSearchQuery</servlet-name>
+		<url-pattern>/ReservationSearchQuery</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
