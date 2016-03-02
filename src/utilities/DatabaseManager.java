@@ -4,15 +4,19 @@ import models.*;
 import models.User.VALIDATE;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 public class DatabaseManager {
 	
     private static final String DB_DRIVER = "com.mysql.jdbc.Driver";
-	private final String DB_CONNECTION = "jdbc:mysql://cse.unl.edu:3306/ejohnson";
-	private static final String DB_USER = "ejohnson";
-	private static final String DB_PASSWORD = "hz8EyQ";
+	private final String DB_CONNECTION = "jdbc:mysql://localhost:3306/Hotel_Manager";
+	private static final String DB_USER = "root";
+	private static final String DB_PASSWORD = "p0RcineIsHam?";
 	
 	public DatabaseManager(){
 		
@@ -20,7 +24,7 @@ public class DatabaseManager {
 	
 	private List<Hotel> getAllHotels(){
 		
-		List<Hotel> hotels = null;
+		List<Hotel> hotels = new ArrayList<Hotel>();
 		
 		Connection conn = null;
 		
@@ -174,7 +178,7 @@ public class DatabaseManager {
 	
 	public List<Amenity> getAllAmenities(){
 		
-		List<Amenity> amenities = null;
+		List<Amenity> amenities = new ArrayList<Amenity>();
 		
 		Connection conn = null;
 		
@@ -231,7 +235,7 @@ public class DatabaseManager {
 	//Probably won't need this
 	public List<HotelReview> getAllHotelReviews(){
 		
-		List<HotelReview> hotelReviews = null;
+		List<HotelReview> hotelReviews = new ArrayList<HotelReview>();
 		
 		Connection conn = null;
 		
@@ -295,7 +299,7 @@ public class DatabaseManager {
 	
 	public List<HotelRoomType> getAllRoomTypes(){
 		
-		List<HotelRoomType> roomTypes = null;
+		List<HotelRoomType> roomTypes = new ArrayList<HotelRoomType>();
 		
 		Connection conn = null;
 		
@@ -358,7 +362,7 @@ public class DatabaseManager {
 	//Room Type
 	//Amenities
 	//PUT FUNCTION HERE
-	
+	/*
 	public List<Hotel> searchHotels(Hotel h, List<Amenity> amenities, 
 									HotelRoom r, HotelRoomType t){
 		
@@ -433,6 +437,152 @@ public class DatabaseManager {
 		return hotels;
 		
 	}
+	*/
+	
+	public List<Hotel> searchHotels(Date checkInDate, Date checkOutDate, String city,
+									 int numRooms, HotelRoomType roomType, List<Amenity> amenities){
+		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+		
+		List<Hotel> hotels = new ArrayList<Hotel>();
+		
+		
+		try{
+			
+			Class.forName(DB_DRIVER);
+			
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+			
+			String query = "SELECT DISTINCT(hr.Id), hr.HotelId FROM Hotels AS h JOIN HotelRooms AS hr ON h.Id = hr.HotelId "+
+						  "JOIN HotelRoomType AS r ON r.Id = hr.RoomTypeId " +
+                          "JOIN HotelAmenities AS ha ON h.Id = ha.HotelId " +
+                          "JOIN Amenities AS a ON a.Id = ha.AmenityId " +
+                          "WHERE ";
+			
+			if(checkInDate != null){
+				
+				query += "hr.StartDate < ? AND ";
+				System.out.println(format.format(checkInDate).toString());
+			
+			}
+			if(checkOutDate != null){
+				
+				query += "hr.EndDate > ? AND ";
+				System.out.println(format.format(checkOutDate).toString());
+				
+			}
+			if(city != null){
+				query += "h.City = ? AND ";
+			}
+			if(numRooms > 0){
+				query += "hr.AvailableNumber >= ? AND ";
+			}
+			if(roomType != null){
+				query += "r.RoomType = ? AND ";
+			}
+			if(amenities.isEmpty()){
+				for(Amenity a: amenities){
+					query += "? IN (SELECT a.Name FROM Hotels AS ho JOIN HotelAmenities AS ha ON ho.Id = ha.HotelId"
+							+ "									   JOIN Amenities AS a ON a.Id = ha.AmenityId"
+							+ "									   WHERE ho.Id = h.Id) AND ";
+				}
+			}
+			
+			String fin_query = query.substring(0, query.length()-4);
+			
+			System.out.println(fin_query);
+			
+			ps = conn.prepareStatement(fin_query);
+			
+			int i = 1;
+			
+			if(checkInDate != null){
+				
+				ps.setDate(i, checkInDate);
+				i++;
+			
+			}
+			if(checkOutDate != null){
+				
+				ps.setDate(i, checkOutDate);
+				System.out.println(checkOutDate);
+				i++;
+				
+			}
+			if(city != null){
+				ps.setString(i, city);
+				i++;
+			}
+			if(numRooms > 0){
+				ps.setInt(i, numRooms);
+				System.out.println(numRooms);
+				i++;
+			}
+			if(roomType != null){
+				ps.setString(i, roomType.getRoomType());
+				System.out.println(roomType.getRoomType());
+				i++;
+			}
+			if(amenities.isEmpty()){
+				for(Amenity a: amenities){
+					ps.setString(i, a.getName());
+					i++;
+				}
+			}
+			
+			ResultSet rs = ps.executeQuery();
+			
+			int numHotels = 0;
+			
+			while(rs.next()){
+				
+				Hotel h = getHotel(rs.getInt("HotelId"));
+				
+				System.out.println("found a room");
+				
+				if(!hotels.contains(h)){
+					hotels.add(h);
+					numHotels++;
+				}else{
+					hotels.get(numHotels).addRoom(getHotelRoom(rs.getInt("Id")));
+				}
+				
+			}
+			
+			rs.close();
+			
+		}catch(Exception e){
+			
+			e.printStackTrace();
+			System.out.println("Connection Error");
+			
+		}finally{
+			
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return hotels;
+	}
 	
 	//TODO: Create getUserFuction
 	
@@ -457,27 +607,27 @@ public class DatabaseManager {
 			ps.setString(1, u.getUsername());
 
 			ResultSet rs = ps.executeQuery();	
-
-			rs.next();
-
-			if(rs.getString("Username").equals(u.getUsername())){
-				success = false;
-			}
-			else
-			{
 			
+			if(rs.next()){
+
+				if(rs.getString("Username").equals(u.getUsername())){
+					success = false;
+				}
+			}
+
+			rs.close();
 		
-			String insert = "INSERT INTO Users " +
+					String insert = "INSERT INTO Users " +
 							"(Username, Password) VALUES " + 
 							"(?, ?)";
 			
-			ps = conn.prepareStatement(insert);
+					ps = conn.prepareStatement(insert);
 			
-			ps.setString(1, u.getUsername());
-			ps.setString(2, u.getPassword());
-			ps.executeUpdate();	
-			success = true;
-			}
+					ps.setString(1, u.getUsername());
+					ps.setString(2, u.getPassword());
+					ps.executeUpdate();	
+					success = true;
+
 		
 		}catch(Exception e){
 			success = false;
@@ -704,8 +854,6 @@ public class DatabaseManager {
 		
 	}
 	
-	//TODO: Create a addHotelReservation
-	
 	public int addHotelReservation(HotelReservation h){
 		
 		Connection conn = null;
@@ -777,7 +925,69 @@ public class DatabaseManager {
 		
 	}
 	
-	//TODO: Create updateHotelReservation
+	public Hotel getHotel(int hotelId){
+		
+		Connection conn = null;
+				
+		PreparedStatement ps = null;
+		
+		Hotel h = new Hotel();
+		
+		String query = "SELECT * FROM Hotels WHERE Id = ?";
+		
+		try
+		{
+			Class.forName(DB_DRIVER);
+			
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+			
+			ps = conn.prepareStatement(query);
+			
+			ps.setInt(1, hotelId);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			
+			
+			while(rs.next()){
+				
+				h.setName(rs.getString("Name"));
+				h.setCity(rs.getString("City"));
+				h.setState(rs.getString("State"));
+				h.setDescription(rs.getString("Description"));
+				h.setNearestPoints(rs.getString("NearestPoints"));
+				h.setAddress(rs.getString("Address"));
+				h.setId(rs.getInt("Id"));
+			}
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+		
+		return h;
+		
+	}
 	
 	public void updateHotelReservation(HotelReservation r){
 
@@ -1050,6 +1260,7 @@ public class DatabaseManager {
 		}
 		
 	}
+	
 	public void getHotelHotelReservations(Hotel h){
 		
 		Connection conn = null;
@@ -1133,6 +1344,133 @@ public class DatabaseManager {
 			}
 			
 		}
+		
+	}
+	
+	public HotelRoom getHotelRoom(int id){
+		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		HotelRoom hr = new HotelRoom();
+		
+		String query = "SELECT * FROM HotelRooms WHERE Id = ?";
+		
+		try
+		{
+			Class.forName(DB_DRIVER);
+			
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+			
+			ps = conn.prepareStatement(query);
+			
+			ps.setInt(1, id);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			
+			
+			while(rs.next()){
+				
+				hr.setId(rs.getInt("Id"));
+				hr.setRoomType(getHotelRoomType(rs.getInt("RoomTypeId")));
+				hr.setAvailableNum(rs.getInt("AvailableNumber"));
+				hr.setPricePerNight(rs.getDouble("PricePerNight"));
+				hr.setStartDate(rs.getDate("StartDate"));
+				hr.setEndDate(rs.getDate("EndDate"));
+			}
+			
+			rs.close();
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+		
+		return hr;
+		
+	}
+	
+	public HotelRoomType getHotelRoomType(int id){
+		
+Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		HotelRoomType ht = new HotelRoomType();
+		
+		String query = "SELECT * FROM HotelRoomTypes WHERE Id = ?";
+		
+		try
+		{
+			Class.forName(DB_DRIVER);
+			
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+			
+			ps = conn.prepareStatement(query);
+			
+			ps.setInt(1, id);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			
+			
+			while(rs.next()){
+				
+				ht.setId(rs.getInt("Id"));
+				ht.setRoomType(rs.getString("RoomType"));
+				ht.setDescription(rs.getString("Description"));
+			}
+			
+			rs.close();
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+		
+		return ht;
 		
 	}
 	
@@ -1379,6 +1717,9 @@ public class DatabaseManager {
 		
 	}
 	
-
+//TODO: addCreditcard
+	
+	
+//TODO: updateCreditcard
 	
 }
