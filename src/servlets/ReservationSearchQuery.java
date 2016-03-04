@@ -76,7 +76,7 @@ public class ReservationSearchQuery extends HttpServlet {
 		int	numRooms = Integer.parseInt(request.getParameter("numRooms"));
 		HotelRoomType roomType = new HotelRoomType();
 		roomType.setRoomType(request.getParameter("roomType"));
-		System.out.println(roomType.getRoomType());
+	//	System.out.println(roomType.getRoomType());
 		String[] amenities = request.getParameterValues("Amenities");
 		List<Amenity> am = new ArrayList<Amenity>();
 		
@@ -98,13 +98,13 @@ public class ReservationSearchQuery extends HttpServlet {
 			db.getHotelAmenities(h);
 			db.getHotelHotelReviews(h);
 			for(HotelRoom r: h.getAllHotelRooms()){
-				System.out.println(r.getPricePerNight());
+			//	System.out.println(r.getPricePerNight());
 			}
 		}
 		
-		
-		
 		request.setAttribute("hotels", hotels);
+		
+		request.setAttribute("requestRooms", numRooms);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("ReservationSearchResults.jsp");
 		rd.forward(request, response);

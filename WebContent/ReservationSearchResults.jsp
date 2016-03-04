@@ -62,8 +62,10 @@
 					</c:forEach>
 				</td>
 				<td>
-					<form action="ViewAndBookReservations.jsp">
+					<form action="ReservationSearchResults" method="post">
 						<input type="submit" class="btn" value="View and Book"/>
+						<input type="hidden" name="roomId" value=${ room.getId() } />
+						<input type="hidden" name="numRooms" value ="${ requestRooms }" />
 					</form>
 				</td>
 			</tr>

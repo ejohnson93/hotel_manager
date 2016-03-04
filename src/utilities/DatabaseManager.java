@@ -488,7 +488,7 @@ public class DatabaseManager {
 			}
 			if(!amenities.isEmpty()){
 				for(Amenity a: amenities){
-					System.out.println(a.getName());
+				//	System.out.println(a.getName());
 					query += "? IN (SELECT a.Name FROM Hotels AS ho JOIN HotelAmenities AS ha ON ho.Id = ha.HotelId "
 							+ "JOIN Amenities AS a ON a.Id = ha.AmenityId "
 							+ "WHERE ho.Id = h.Id) AND ";
@@ -497,7 +497,7 @@ public class DatabaseManager {
 			
 			String fin_query = query.substring(0, query.length()-4);
 			
-			System.out.println(fin_query);
+		//	System.out.println(fin_query);
 			
 			ps = conn.prepareStatement(fin_query);
 			
@@ -545,7 +545,7 @@ public class DatabaseManager {
 				
 				Hotel h = getHotel(rs.getInt("HotelId"));
 				
-				System.out.println("found a room");
+			//	System.out.println("found a room");
 				
 				if(!hotels.contains(h)){
 					hotels.add(h);
@@ -1453,6 +1453,7 @@ public class DatabaseManager {
 				hr.setPricePerNight(rs.getDouble("PricePerNight"));
 				hr.setStartDate(rs.getDate("StartDate"));
 				hr.setEndDate(rs.getDate("EndDate"));
+				hr.setHotelId(rs.getInt("HotelId"));
 			}
 			
 			rs.close();
