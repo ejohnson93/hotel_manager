@@ -26,6 +26,13 @@
 		<servlet-name>ReservationSearchQuery</servlet-name>
 		<servlet-class>servlets.ReservationSearchQuery</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>CustomerHomePage</display-name>
+		<servlet-name>CustomerHomePage</servlet-name>
+		<servlet-class>servlets.CustomerHomePage</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>Register</servlet-name>
 		<url-pattern>/Register</url-pattern>
@@ -33,6 +40,10 @@
 	<servlet-mapping>
 		<servlet-name>ReservationSearchQuery</servlet-name>
 		<url-pattern>/ReservationSearchQuery</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>CustomerHomePage</servlet-name>
+		<url-pattern>/CustomerHomePage</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

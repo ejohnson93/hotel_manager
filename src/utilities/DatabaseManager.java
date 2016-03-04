@@ -14,9 +14,9 @@ import java.util.Locale;
 public class DatabaseManager {
 	
     private static final String DB_DRIVER = "com.mysql.jdbc.Driver";
-	private final String DB_CONNECTION = "jdbc:mysql://localhost:3306/Hotel_Manager";
-	private static final String DB_USER = "root";
-	private static final String DB_PASSWORD = "p0RcineIsHam?";
+	private final String DB_CONNECTION = "jdbc:mysql://cse.unl.edu:3306/ejohnson";
+	private static final String DB_USER = "ejohnson";
+	private static final String DB_PASSWORD = "hz8EyQ";
 	
 	public DatabaseManager(){
 		
@@ -198,6 +198,7 @@ public class DatabaseManager {
 				Amenity a = new Amenity();
 				a.setId(rs.getInt("Id"));
 				a.setName(rs.getString("Name"));
+				a.setDescription(rs.getString("Description"));
 				amenities.add(a);
 				
 			}
@@ -465,30 +466,32 @@ public class DatabaseManager {
 			
 			if(checkInDate != null){
 				
-				query += "hr.StartDate < ? AND ";
-				System.out.println(format.format(checkInDate).toString());
+				query += "hr.StartDate <= ? AND ";
+			//	System.out.println(format.format(checkInDate).toString());
 			
 			}
 			if(checkOutDate != null){
 				
-				query += "hr.EndDate > ? AND ";
-				System.out.println(format.format(checkOutDate).toString());
+				query += "hr.EndDate >= ? AND ";
+			//	System.out.println(format.format(checkOutDate).toString());
 				
 			}
-			if(city != null){
+			if(!city.isEmpty()){
 				query += "h.City = ? AND ";
+				System.out.println("City is " + city);
 			}
 			if(numRooms > 0){
 				query += "hr.AvailableNumber >= ? AND ";
 			}
-			if(roomType != null){
+			if(roomType != null || roomType.getRoomType().isEmpty()){
 				query += "r.RoomType = ? AND ";
 			}
-			if(amenities.isEmpty()){
+			if(!amenities.isEmpty()){
 				for(Amenity a: amenities){
-					query += "? IN (SELECT a.Name FROM Hotels AS ho JOIN HotelAmenities AS ha ON ho.Id = ha.HotelId"
-							+ "									   JOIN Amenities AS a ON a.Id = ha.AmenityId"
-							+ "									   WHERE ho.Id = h.Id) AND ";
+					System.out.println(a.getName());
+					query += "? IN (SELECT a.Name FROM Hotels AS ho JOIN HotelAmenities AS ha ON ho.Id = ha.HotelId "
+							+ "JOIN Amenities AS a ON a.Id = ha.AmenityId "
+							+ "WHERE ho.Id = h.Id) AND ";
 				}
 			}
 			
@@ -509,25 +512,25 @@ public class DatabaseManager {
 			if(checkOutDate != null){
 				
 				ps.setDate(i, checkOutDate);
-				System.out.println(checkOutDate);
+			//	System.out.println(checkOutDate);
 				i++;
 				
 			}
-			if(city != null){
+			if(!city.isEmpty()){
 				ps.setString(i, city);
 				i++;
 			}
 			if(numRooms > 0){
 				ps.setInt(i, numRooms);
-				System.out.println(numRooms);
+		//		System.out.println(numRooms);
 				i++;
 			}
-			if(roomType != null){
+			if(roomType != null || roomType.getRoomType().isEmpty()){
 				ps.setString(i, roomType.getRoomType());
-				System.out.println(roomType.getRoomType());
+		//		System.out.println(roomType.getRoomType());
 				i++;
 			}
-			if(amenities.isEmpty()){
+			if(!amenities.isEmpty()){
 				for(Amenity a: amenities){
 					ps.setString(i, a.getName());
 					i++;
@@ -546,6 +549,7 @@ public class DatabaseManager {
 				
 				if(!hotels.contains(h)){
 					hotels.add(h);
+					hotels.get(numHotels).addRoom(getHotelRoom(rs.getInt("Id")));
 					numHotels++;
 				}else{
 					hotels.get(numHotels).addRoom(getHotelRoom(rs.getInt("Id")));
@@ -585,6 +589,76 @@ public class DatabaseManager {
 	}
 	
 	//TODO: Create getUserFuction
+	
+	public User getUser(int id){
+		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		User u = null;
+		
+		String query = "SELECT * FROM Users WHERE Id = ?";
+		
+		try
+		{
+			Class.forName(DB_DRIVER);
+			
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+			
+			ps = conn.prepareStatement(query);
+			
+			ps.setInt(1, id);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			
+			
+			while(rs.next()){
+				
+				u = new User(rs.getString("Username"), rs.getString("Password"));
+				u.setFirstName(rs.getString("FirstName"));
+				u.setLastName(rs.getString("LastName"));
+				u.setAddressLine1(rs.getString("AddressLine1"));
+				u.setAddressLine1(rs.getString("AddressLine2"));
+				u.setCity(rs.getString("City"));
+				u.setState(rs.getString("State"));
+				u.setPostalCode(rs.getString("PostalCode"));
+				u.setType(rs.getInt("Type"));
+				u.setStatus(rs.getInt("Status"));
+				u.setId(rs.getInt("Id"));
+			}
+			
+			rs.close();
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+		
+		return u;
+		
+	}
 	
 	public boolean addUser(User u){
 		
@@ -1420,7 +1494,7 @@ Connection conn = null;
 		
 		HotelRoomType ht = new HotelRoomType();
 		
-		String query = "SELECT * FROM HotelRoomTypes WHERE Id = ?";
+		String query = "SELECT * FROM HotelRoomType WHERE Id = ?";
 		
 		try
 		{

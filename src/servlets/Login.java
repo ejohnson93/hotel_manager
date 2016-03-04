@@ -100,7 +100,7 @@ public class Login extends HttpServlet {
 		if(v == VALIDATE.VALID) {
 			Cookie login = new Cookie("login", "true");
 			response.addCookie(login);
-			response.sendRedirect("CustomerHomePage.jsp");
+			response.sendRedirect("CustomerHomePage");
 			return;
 		} else if (v == VALIDATE.INVALID) {
 			request.setAttribute("errorPass", "Invalid password, please try again!"); 
