@@ -29,6 +29,13 @@
 	<servlet>
 		<description>
 		</description>
+		<display-name>CustomerHomePage</display-name>
+		<servlet-name>CustomerHomePage</servlet-name>
+		<servlet-class>servlets.CustomerHomePage</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
 		<display-name>ManageReservations</display-name>
 		<servlet-name>ManageReservations</servlet-name>
 		<servlet-class>servlets.ManageReservations</servlet-class>
@@ -46,6 +53,20 @@
 		<display-name>ReservationCancellationConfirmation</display-name>
 		<servlet-name>ReservationCancellationConfirmation</servlet-name>
 		<servlet-class>servlets.ReservationCancellationConfirmation</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>ReservationSearchResults</display-name>
+		<servlet-name>ReservationSearchResults</servlet-name>
+		<servlet-class>servlets.ReservationSearchResults</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>ViewAndBook</display-name>
+		<servlet-name>ViewAndBook</servlet-name>
+		<servlet-class>servlets.ViewAndBook</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Register</servlet-name>
@@ -67,10 +88,22 @@
 		<servlet-name>ReservationCancellationConfirmation</servlet-name>
 		<url-pattern>/ReservationCancellationConfirmation</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>CustomerHomePage</servlet-name>
+		<url-pattern>/CustomerHomePage</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ReservationSearchResults</servlet-name>
+		<url-pattern>/ReservationSearchResults</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ViewAndBook</servlet-name>
+		<url-pattern>/ViewAndBook</url-pattern>
+	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>
-		<welcome-file>login.jsp</welcome-file>
+		<welcome-file>Login</welcome-file>
 		<welcome-file>default.html</welcome-file>
 		<welcome-file>default.htm</welcome-file>
 		<welcome-file>default.jsp</welcome-file>

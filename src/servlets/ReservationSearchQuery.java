@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import models.Amenity;
 import models.Hotel;
+import models.HotelRoom;
 import models.HotelRoomType;
 import models.User;
 import models.User.VALIDATE;
@@ -55,7 +57,7 @@ public class ReservationSearchQuery extends HttpServlet {
 		
 		DatabaseManager db = new DatabaseManager();
 		
-		System.out.println(request.getParameter("startDate"));
+	//	System.out.println(request.getParameter("startDate"));
 		try {
 			checkInDate = new java.sql.Date(format.parse(request.getParameter("startDate")).getTime());
 		} catch (ParseException e) {
@@ -74,6 +76,7 @@ public class ReservationSearchQuery extends HttpServlet {
 		int	numRooms = Integer.parseInt(request.getParameter("numRooms"));
 		HotelRoomType roomType = new HotelRoomType();
 		roomType.setRoomType(request.getParameter("roomType"));
+	//	System.out.println(roomType.getRoomType());
 		String[] amenities = request.getParameterValues("Amenities");
 		List<Amenity> am = new ArrayList<Amenity>();
 		
@@ -81,6 +84,7 @@ public class ReservationSearchQuery extends HttpServlet {
 		
 			for(String s: amenities){
 				Amenity a = new Amenity();
+				//System.out.println(s);
 				a.setName(s);
 				am.add(a);
 			}
@@ -90,10 +94,20 @@ public class ReservationSearchQuery extends HttpServlet {
 		List<Hotel> hotels = db.searchHotels(checkInDate, checkOutDate, city, numRooms, roomType, am);
 		
 		for(Hotel h: hotels){
-			System.out.println(h.getName());
+		//	System.out.println(h.getName());
+			db.getHotelAmenities(h);
+			db.getHotelHotelReviews(h);
+			for(HotelRoom r: h.getAllHotelRooms()){
+			//	System.out.println(r.getPricePerNight());
+			}
 		}
 		
-		response.sendRedirect("ReservationSearchResults.jsp");
+		request.setAttribute("hotels", hotels);
+		
+		request.setAttribute("requestRooms", numRooms);
+		
+		RequestDispatcher rd = request.getRequestDispatcher("ReservationSearchResults.jsp");
+		rd.forward(request, response);
 
 		
 		

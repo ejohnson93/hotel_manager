@@ -20,6 +20,7 @@
   <% } %>
   <ul style="float:right;list-style-type:none;">
   <% if(request.getSession().getAttribute("username") != null){ %>
+  	<li><a>Hello, ${sessionScope.username }</a></li>
     <li><a href="Login">Logout</a></li>
     <%} else { 
     %>

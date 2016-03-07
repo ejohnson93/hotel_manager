@@ -1,10 +1,12 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%@taglib  prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@page import="models.*" %>
 
 <t:layout>
-	<h3>Gen-Eric Hotel</h3>
+	<h3>${ hotel.getName() }</h3>
 	<div>
-	Total Cost $202.46
+	Total Cost $${ totalPrice }
 	</div>
 	<div class="form-group">
 	<form action="ReservationTransactionConfirmation.jsp" method="post">
@@ -71,9 +73,11 @@
 	</form>
 	</div>
 	<br />
-	<div>
-		<form action="ReservationSearchResults.jsp">
-			<input type="submit" class="btn btn-danger" value="Cancel" />
-		</form>
-	</div>
+	 <button class="btn" onclick="goBack()">Go Back</button>
+
+<script>
+function goBack() {
+    window.history.back();
+}
+</script>
 </t:layout>

@@ -1,5 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%@taglib  prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@page import="models.*" %>
 
 
 
@@ -47,23 +49,20 @@
 			<div>Room Type</div>
 			<div class='form-group'>
 				<select name="roomType" value='' >
-					<option id='default' value='0' selected=''>Select Room Type</option>
-					<option value="Standard">Standard</option>
-					<option value="Family">Family</option>
-					<option value="Suite">Suite</option>
+					<option id='default' value='' selected=''>Select Room Type</option>
+					<c:forEach items="${roomTypes}" var="roomType">
+						<option value="${ roomType.getRoomType() }"> ${roomType.getRoomType()}</option>
+					
+					</c:forEach>
 				</select>
 			</div>
 		</div>
 		<div class='col-md-5'>
 			<div>Amenities</div>
 			<div class='form-group'>
-				<input type="checkbox" name="Amenities" value="Bathtub">Bathtub in Room<br>
-				<input type="checkbox" name="Amenities" value="Breakfast">Free breakfast<br>
-				<input type="checkbox" name="Amenities" value="Wifi">Free Wi-Fi<br>
-				<input type="checkbox" name="Amenities" value="Gym">Gym<br>
-				<input type="checkbox" name="Amenities" value="internet">Paid Internet Access<br>
-				<input type="checkbox" name="Amenities" value="pool">Pool<br>
-				<input type="checkbox" name="Amenities" value="pet">Pet friendly 
+			<c:forEach items="${amenities}" var="amenity">
+				<input type="checkbox" name="Amenities" value="${amenity.getName()}">${amenity.getDescription() }<br>
+			</c:forEach> 
 			</div>
 		</div>
 	</div>

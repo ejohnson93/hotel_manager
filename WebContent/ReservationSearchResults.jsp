@@ -1,5 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%@taglib  prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@page import="models.*" %>
 
 <t:layout>
 	<table class="table table-striped">
@@ -31,34 +33,44 @@
 			</tr>
 		</thead>
 		<tbody>
+		<c:forEach items="${hotels}" var="hotel">
+			<c:forEach items="${hotel.getAllHotelRooms()}" var = "room" >
 			<tr>
 				<td>
-					Gen-Eric
+					${hotel.getName()}
 				</td>
 				<td>
-					601 Drury Lane
+					${hotel.getAddress()}
 				</td>
 				<td>
-					Very Nice hotel
+					${hotel.getDescription() }
 				</td>
 				<td>
-					Suite
+					${room.getRoomType().getRoomType() }
 				</td>
 				<td>
-					****
+					${ hotel.getAverageHotelRating() }
 				</td>
 				<td>
-					$101.23
+					${room.getPricePerNight() }
 				</td>
 				<td>
-					Lots of Amenities
+					<c:forEach items="${hotel.getAllAmenities() }" var="amenity">
+					
+						${amenity.getName()} <br />
+						
+					</c:forEach>
 				</td>
 				<td>
-					<form action="ViewAndBookReservations.jsp">
+					<form action="ReservationSearchResults" method="post">
 						<input type="submit" class="btn" value="View and Book"/>
+						<input type="hidden" name="roomId" value=${ room.getId() } />
+						<input type="hidden" name="numRooms" value ="${ requestRooms }" />
 					</form>
 				</td>
 			</tr>
+			</c:forEach>
+		</c:forEach>
 		</tbody>
 	</table>
 </t:layout>

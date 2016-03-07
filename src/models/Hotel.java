@@ -170,5 +170,24 @@ public class Hotel {
 		return null;
 		
 	}
+	public double getAverageHotelRating(){
+		
+		int sum = 0;
+		int numReviews = 0;
+		
+		for(HotelReview hr: this.reviews){
+			sum += hr.getRating();
+			numReviews++;
+		}
+		
+		if(numReviews == 0){
+			return 0;
+		}
+		else
+		{
+			return sum/numReviews;
+		}
+		
+	}
 	
 }

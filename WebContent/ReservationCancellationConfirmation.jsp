@@ -14,7 +14,7 @@
 	<div>
 		<c:out value="Your payment of ${hr.getNumRooms()*hr.getRoom().getPricePerNight()} will be fully refunded." />
 	</div>
-	<form action="CustomerHomePage.jsp">
+	<form action="CustomerHomePage">
 		<input type="submit" class="btn" value="Return Home" />
 	</form>
 </t:layout>

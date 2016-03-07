@@ -47,25 +47,18 @@ public class Login extends HttpServlet {
 		/*
 		try{
 			fis = new FileInputStream(propFilePath);
-
 		    prop.load(fis); 
 		    
 		} catch (FileNotFoundException e) {
-
 		    System.out.println("FileNotFound");
-
 		} catch (IOException e) {
-
 		    System.out.println("IOEXCeption");
-
 		} finally {
-
 		    if (fis != null) {
 		        try {
 		            fis.close();
 		        }
 		        catch (Exception e) {
-
 		            e.printStackTrace();
 		        }
 		    }
@@ -100,7 +93,7 @@ public class Login extends HttpServlet {
 
 		if(v == VALIDATE.VALID) {
 			session.setAttribute("username", name);
-			request.getRequestDispatcher("CustomerHomePage.jsp").forward( request, response);
+			request.getRequestDispatcher("CustomerHomePage").forward( request, response);
 			return;
 		} else if (v == VALIDATE.INVALID) {
 			request.setAttribute("errorPass", "Invalid password, please try again!"); 
