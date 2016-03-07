@@ -56,11 +56,17 @@ public class ViewAndBook extends HttpServlet {
 		
 		double totalPrice = hr.getPricePerNight() * numRooms;
 		
+		totalPrice = totalPrice * 100;
+		
+		double roundedPrice = (int)totalPrice;
+		
+		roundedPrice /= 100;
+		
 		request.setAttribute("hotel", h);
 		
 		request.setAttribute("numRooms", numRooms);
 		
-		request.setAttribute("totalPrice", totalPrice);
+		request.setAttribute("totalPrice", roundedPrice);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("ReservationTransaction.jsp");
 		rd.forward(request, response);
