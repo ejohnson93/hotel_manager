@@ -14,9 +14,9 @@ import java.util.Locale;
 public class DatabaseManager {
 	
     private static final String DB_DRIVER = "com.mysql.jdbc.Driver";
-	private final String DB_CONNECTION = "jdbc:mysql://localhost:3306/Hotel_Manager";
-	private static final String DB_USER = "root";
-	private static final String DB_PASSWORD = "p0RcineIsHam?";
+	private final String DB_CONNECTION = "jdbc:mysql://cse.unl.edu:3306/ejohnson";
+	private static final String DB_USER = "ejohnson";
+	private static final String DB_PASSWORD = "hz8EyQ";
 	
 	public DatabaseManager(){
 		
@@ -884,7 +884,7 @@ public class DatabaseManager {
 			ps.setInt(6, h.getUserId());
 			ps.setInt(7, h.getStatus());
 			ps.setString(8, h.getNotes());
-			ps.setInt(9, h.getRoomType().getId());
+			ps.setInt(9, h.getRoom().getId());
 	
 			ps.executeUpdate();	
 			
@@ -1022,7 +1022,7 @@ public class DatabaseManager {
 			ps.setInt(6, r.getUserId());
 			ps.setInt(7, r.getStatus());
 			ps.setString(8, r.getNotes());
-			ps.setInt(9, r.getRoomType().getId());
+			ps.setInt(9, r.getRoom().getId());
 			ps.setInt(10, r.getId());
 
 	
@@ -1261,7 +1261,7 @@ public class DatabaseManager {
 		
 	}
 	
-	public void getHotelHotelReservations(Hotel h){
+	/*public void getHotelHotelReservations(Hotel h){
 		
 		Connection conn = null;
 		
@@ -1312,7 +1312,7 @@ public class DatabaseManager {
 						
 						rs1.close();
 						
-						hr.setRoomType(ht);
+						//hr.setRoomType(ht);
 						
 						h.addReservation(hr);
 						
@@ -1345,7 +1345,7 @@ public class DatabaseManager {
 			
 		}
 		
-	}
+	}*/
 	
 	public HotelRoom getHotelRoom(int id){
 		
@@ -1420,7 +1420,7 @@ Connection conn = null;
 		
 		HotelRoomType ht = new HotelRoomType();
 		
-		String query = "SELECT * FROM HotelRoomTypes WHERE Id = ?";
+		String query = "SELECT * FROM HotelRoomType WHERE Id = ?";
 		
 		try
 		{
@@ -1573,7 +1573,7 @@ Connection conn = null;
 						hr.setStatus(rs.getInt("Status"));
 						hr.setNotes(rs.getString("Notes"));
 						
-						query = "SELECT * FROM HotelRoomType " + 
+						query = "SELECT * FROM HotelRooms " + 
 								"WHERE Id = ?";
 						ps = conn.prepareStatement(query);
 						ps.setInt(1, rs.getInt("RoomTypeId"));
@@ -1582,15 +1582,22 @@ Connection conn = null;
 						
 						rs1.next();
 						
-						HotelRoomType ht = new HotelRoomType();
+						HotelRoom ht = new HotelRoom();
 						
 						ht.setId(rs1.getInt("Id"));
-						ht.setRoomType(rs1.getString("RoomType"));
-						ht.setDescription(rs1.getString("Description"));
+						ht.setAvailableNum(rs1.getInt("AvailableNumber"));
+						ht.setHotelId(rs1.getInt("HotelId"));
+						HotelRoomType t = new HotelRoomType();
+						t.setId(rs1.getInt("RoomTypeId"));
+						ht.setRoomType(t);
+						ht.setPricePerNight(rs1.getDouble("PricePerNight"));
+						ht.setStartDate(rs1.getDate("StartDate"));
+						ht.setEndDate(rs1.getDate("EndDate"));
+						
 						
 						rs1.close();
 						
-						hr.setRoomType(ht);
+						hr.setRoom(ht);
 						
 						u.addReservation(hr);
 						
@@ -1717,9 +1724,223 @@ Connection conn = null;
 		
 	}
 	
-//TODO: addCreditcard
+public User getUserById(int id){
+		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		User u = null;
+		
+		String query = "SELECT * FROM Users WHERE Id = ?";
+		
+		try
+		{
+			Class.forName(DB_DRIVER);
+			
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+			
+			ps = conn.prepareStatement(query);
+			
+			ps.setInt(1, id);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			
+			
+			while(rs.next()){
+				
+				u = new User(rs.getString("Username"), rs.getString("Password"));
+				u.setFirstName(rs.getString("FirstName"));
+				u.setLastName(rs.getString("LastName"));
+				u.setAddressLine1(rs.getString("AddressLine1"));
+				u.setAddressLine1(rs.getString("AddressLine2"));
+				u.setCity(rs.getString("City"));
+				u.setState(rs.getString("State"));
+				u.setPostalCode(rs.getString("PostalCode"));
+				u.setType(rs.getInt("Type"));
+				u.setStatus(rs.getInt("Status"));
+				u.setId(rs.getInt("Id"));
+			}
+			
+			rs.close();
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+		
+		return u;
+		
+	}
+
+public User getUserByUsername(String name){
 	
+	Connection conn = null;
 	
-//TODO: updateCreditcard
+	PreparedStatement ps = null;
+	
+	User u = null;
+	
+	String query = "SELECT * FROM Users WHERE Username = ?";
+	
+	try
+	{
+		Class.forName(DB_DRIVER);
+		
+		conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+		
+		ps = conn.prepareStatement(query);
+		
+		ps.setString(1, name);
+		
+		ResultSet rs = ps.executeQuery();
+		
+		
+		
+		while(rs.next()){
+			
+			u = new User(rs.getString("Username"), rs.getString("Password"));
+			u.setFirstName(rs.getString("FirstName"));
+			u.setLastName(rs.getString("LastName"));
+			u.setAddressLine1(rs.getString("AddressLine1"));
+			u.setAddressLine1(rs.getString("AddressLine2"));
+			u.setCity(rs.getString("City"));
+			u.setState(rs.getString("State"));
+			u.setPostalCode(rs.getString("PostalCode"));
+			u.setType(rs.getInt("Type"));
+			u.setStatus(rs.getInt("Status"));
+			u.setId(rs.getInt("Id"));
+		}
+		
+		rs.close();
+		
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+	}
+	finally
+	{
+		try {
+			if(ps != null){
+				ps.close();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			if(conn != null){
+				conn.close();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+	
+	return u;
 	
 }
+
+public HotelReservation getReservationById(int id){
+	
+	Connection conn = null;
+	
+	PreparedStatement ps = null;
+	
+	HotelReservation hr = null;
+	
+	String query = "SELECT * FROM HotelReservations WHERE Id = ?";
+	
+	try
+	{
+		Class.forName(DB_DRIVER);
+		
+		conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+		
+		ps = conn.prepareStatement(query);
+		
+		ps.setInt(1, id);
+		
+		ResultSet rs = ps.executeQuery();
+		
+		
+		
+		while(rs.next()){
+			
+			hr = new HotelReservation();
+			hr.setId(rs.getInt("Id"));
+			hr.setCheckInDate(rs.getDate("CheckInDate"));
+			hr.setCheckOutDate(rs.getDate("CheckOutDate"));
+			hr.setNumRooms(rs.getInt("NumberOfRooms"));
+			hr.setHotelId(rs.getInt("HotelId"));
+			hr.setReservationNum(rs.getString("ReservationNumber"));
+			hr.setUserId(rs.getInt("UserId"));
+			hr.setStatus(rs.getInt("Status"));
+			hr.setRoom(getHotelRoom(rs.getInt("RoomTypeId")));
+			hr.setHotel(getHotel(rs.getInt("HotelId")));
+			
+		}
+		
+		rs.close();
+		
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+	}
+	finally
+	{
+		try {
+			if(ps != null){
+				ps.close();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			if(conn != null){
+				conn.close();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+	
+	return hr;
+	
+}
+
+
+//TODO: addCreditcard
+
+
+//TODO: updateCreditcard
+
+}
+
+

@@ -26,6 +26,27 @@
 		<servlet-name>ReservationSearchQuery</servlet-name>
 		<servlet-class>servlets.ReservationSearchQuery</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>ManageReservations</display-name>
+		<servlet-name>ManageReservations</servlet-name>
+		<servlet-class>servlets.ManageReservations</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>CancelReservations</display-name>
+		<servlet-name>CancelReservations</servlet-name>
+		<servlet-class>servlets.CancelReservations</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>ReservationCancellationConfirmation</display-name>
+		<servlet-name>ReservationCancellationConfirmation</servlet-name>
+		<servlet-class>servlets.ReservationCancellationConfirmation</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>Register</servlet-name>
 		<url-pattern>/Register</url-pattern>
@@ -33,6 +54,18 @@
 	<servlet-mapping>
 		<servlet-name>ReservationSearchQuery</servlet-name>
 		<url-pattern>/ReservationSearchQuery</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ManageReservations</servlet-name>
+		<url-pattern>/ManageReservations</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>CancelReservations</servlet-name>
+		<url-pattern>/CancelReservations</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ReservationCancellationConfirmation</servlet-name>
+		<url-pattern>/ReservationCancellationConfirmation</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

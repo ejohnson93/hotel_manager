@@ -12,6 +12,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import models.User;
 import models.User.VALIDATE;
@@ -75,10 +76,8 @@ public class Login extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Cookie cookie = new Cookie("login", "false");
-		response.addCookie(cookie);
-		response.sendRedirect("login.jsp");
-			
+		request.getSession().invalidate();
+		request.getRequestDispatcher("login.jsp").forward( request, response);
 	}
 
 	/**
@@ -91,6 +90,8 @@ public class Login extends HttpServlet {
 		
 		User user = new User(name, pass);
 		
+		HttpSession session = request.getSession(true);
+		
 		DatabaseManager dbManager = new DatabaseManager();
 		
 		VALIDATE v = dbManager.validateUser(user);
@@ -98,9 +99,8 @@ public class Login extends HttpServlet {
 	    //VALIDATE v = user.validateUser(prop);
 
 		if(v == VALIDATE.VALID) {
-			Cookie login = new Cookie("login", "true");
-			response.addCookie(login);
-			response.sendRedirect("CustomerHomePage.jsp");
+			session.setAttribute("username", name);
+			request.getRequestDispatcher("CustomerHomePage.jsp").forward( request, response);
 			return;
 		} else if (v == VALIDATE.INVALID) {
 			request.setAttribute("errorPass", "Invalid password, please try again!"); 

@@ -1,21 +1,24 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page import="models.*" %>
 
 <t:layout>
 
 	<h1>Confirm Cancellation</h1>
 	<div>
 		<div>
-			Gen-Eric Hotel
+			<c:out value="${hr.getHotel().getName()}" />
 		</div>
 		<div>
-			3 Rooms
+			<c:out value="${hr.getNumRooms()} Rooms" />
 		</div>
 		<div>
-			Total: $202.46
+			<c:out value="Total: ${hr.getNumRooms()*hr.getRoom().getPricePerNight()}" />
 		</div>
 	</div>
-	<form action="ReservationCancellationConfirmation.jsp">
+	<form action="ReservationCancellationConfirmation" method="post">
+		<input type="hidden" name="hrid" value="${hr.getId()}" />
 		<input type="submit" class="btn" value="Confirm Cancellation"/>
 	</form>
 	<form action="CustomerHomePage.jsp">

@@ -4,7 +4,7 @@
 <t:layout>
 	<h3>Gen-Eric</h3>
 	<div>
-	Details: This is a really really reallly good hotel.
+	Details: This is a really really really good hotel.
 	</div>
 	<div>
 	Reviews:
@@ -18,7 +18,10 @@
 		<input type="submit" class="btn" value="Book"/>
 	</form>
 	<form action="ReservationSearchResults.jsp">
-		<input type="submit" class="btn" value="Back"/>
+		<input type="submit" class="btn" value="Back to results"/>
+	</form>
+	<form action="CustomerHomePage.jsp">
+		<input type="submit" class="btn" value="New Search"/>
 	</form>
 
 </t:layout>
