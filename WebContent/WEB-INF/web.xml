@@ -68,6 +68,13 @@
 		<servlet-name>ViewAndBook</servlet-name>
 		<servlet-class>servlets.ViewAndBook</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>TransactionConfirmation</display-name>
+		<servlet-name>TransactionConfirmation</servlet-name>
+		<servlet-class>servlets.TransactionConfirmation</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>Register</servlet-name>
 		<url-pattern>/Register</url-pattern>
@@ -99,6 +106,10 @@
 	<servlet-mapping>
 		<servlet-name>ViewAndBook</servlet-name>
 		<url-pattern>/ViewAndBook</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>TransactionConfirmation</servlet-name>
+		<url-pattern>/TransactionConfirmation</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
