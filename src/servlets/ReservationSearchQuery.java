@@ -1,7 +1,7 @@
 package servlets;
 
 import java.io.IOException;
-
+import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +24,7 @@ import models.HotelRoomType;
 import models.User;
 import models.User.VALIDATE;
 import utilities.DatabaseManager;
+import utilities.GzipUtilities;
 
 /**
  * Servlet implementation class ReservationSearchQuery
@@ -105,6 +106,19 @@ public class ReservationSearchQuery extends HttpServlet {
 		request.setAttribute("hotels", hotels);
 		
 		request.setAttribute("requestRooms", numRooms);
+		
+		response.setContentType("text/html");
+		
+		PrintWriter out;
+		
+		if(GzipUtilities.isGzipSupported(request) &&
+				!GzipUtilities.isGzipDisabled(request)){
+			out = GzipUtilities.getGzipWriter(response);
+			response.setHeader("Content-Encoding", "gzip");
+			
+		}else{
+			out = response.getWriter();
+		}
 		
 		RequestDispatcher rd = request.getRequestDispatcher("ReservationSearchResults.jsp");
 		rd.forward(request, response);
