@@ -22,8 +22,9 @@ public class GzipUtilities {
 	}
 	
 	public static PrintWriter getGzipWriter(HttpServletResponse response) throws IOException{
-		
-		return (new PrintWriter(new GZIPOutputStream(response.getOutputStream())));
+		PrintWriter pw = new PrintWriter(new GZIPOutputStream(response.getOutputStream()));
+		pw.close();
+		return (pw);
 	}
 
 }

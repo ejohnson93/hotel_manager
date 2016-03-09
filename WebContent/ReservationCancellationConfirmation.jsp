@@ -12,7 +12,7 @@
 		<c:out value="${hr.getNumRooms()} Rooms" />
 	</div>
 	<div>
-		<c:out value="Your payment of ${hr.getNumRooms()*hr.getRoom().getPricePerNight()} will be fully refunded." />
+		<c:out value="Your payment of ${price} will be fully refunded." />
 	</div>
 	<form action="CustomerHomePage">
 		<input type="submit" class="btn" value="Return Home" />

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class DatabaseManager {
 	
@@ -355,90 +356,6 @@ public class DatabaseManager {
 		
 	}
 	
-	//TODO: Need to create search to search hotels based on:
-	//Check in date
-	//Check out date
-	//City
-	//Num rooms
-	//Room Type
-	//Amenities
-	//PUT FUNCTION HERE
-	/*
-	public List<Hotel> searchHotels(Hotel h, List<Amenity> amenities, 
-									HotelRoom r, HotelRoomType t){
-		
-		List<Hotel> hotels = getAllHotels();
-		
-		if(h.getCity() != null){
-			
-			//trim hotels that don't match city
-			for(Iterator<Hotel> iterator = hotels.iterator(); iterator.hasNext();){
-				Hotel cur_hotel = iterator.next();
-				if(cur_hotel.getCity().equals(h.getCity())){
-					iterator.remove();
-				}
-			}
-		
-		}
-		if(!amenities.isEmpty()){
-			
-			//trim Hotels that don't have the amenities
-			for(Iterator<Hotel> iterator = hotels.iterator(); iterator.hasNext();){
-				Hotel cur_hotel = iterator.next();
-				for(Amenity a: amenities){
-					if(cur_hotel.getAmenityByName(a.getName()) == null){
-						iterator.remove();
-						break;
-					}
-				}
-			}
-		
-		}
-		//trim the hotels that don't have the startDate, endDate, or roomType
-			
-		for(Iterator<Hotel> iterator = hotels.iterator(); iterator.hasNext();){
-			Hotel cur_hotel = iterator.next();
-			
-			for(Iterator<HotelRoom> roomIt = cur_hotel.getAllHotelRooms().iterator(); roomIt.hasNext();){
-					HotelRoom cur_room = roomIt.next();
-					
-					if(r.getStartDate() != null && r.getEndDate() != null){
-						
-						if(cur_room.getStartDate().after(r.getStartDate())){
-							roomIt.remove();
-							break;
-						}
-						if(cur_room.getEndDate().after(r.getEndDate())){
-							roomIt.remove();
-							break;
-						}
-						
-					}
-					if(!cur_room.getRoomType().getRoomType().equals(t.getRoomType())){
-						roomIt.remove();
-						break;
-					}
-					
-					
-					//If there is no number, then don't trim, otherwise, trim
-					if(r.getAvailableNum() > 0 && cur_room.getAvailableNum() < r.getAvailableNum()){
-						roomIt.remove();
-					}
-						
-					
-			}
-			//If after trimming, no rooms for hotel is left,
-			//trim the hotel
-			if(cur_hotel.getAllHotelRooms().isEmpty()){
-				iterator.remove();
-			}
-		}
-			
-		
-		return hotels;
-		
-	}
-	*/
 	
 	public List<Hotel> searchHotels(Date checkInDate, Date checkOutDate, String city,
 									 int numRooms, HotelRoomType roomType, List<Amenity> amenities){
@@ -446,8 +363,6 @@ public class DatabaseManager {
 		Connection conn = null;
 		
 		PreparedStatement ps = null;
-		
-		DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 		
 		List<Hotel> hotels = new ArrayList<Hotel>();
 		
@@ -687,7 +602,7 @@ public class DatabaseManager {
 				if(rs.getString("Username").equals(u.getUsername())){
 					success = false;
 				}
-			}
+			}else{
 
 			rs.close();
 		
@@ -702,7 +617,7 @@ public class DatabaseManager {
 					ps.executeUpdate();	
 					success = true;
 
-		
+			}
 		}catch(Exception e){
 			success = false;
 			e.printStackTrace();
@@ -928,74 +843,83 @@ public class DatabaseManager {
 		
 	}
 	
-	public int addHotelReservation(HotelReservation h){
+	public void addHotelReservation(HotelReservation h){
 		
 		Connection conn = null;
 		
 		PreparedStatement ps = null;
 		
-		int newHotelReservationId = -1;
+		//int newHotelReservationId = -1;
 		
-		try{
-			
-			Class.forName(DB_DRIVER);
+		if(h.getNumRooms() > getHotelRoom(h.getRoom().getId()).getAvailableNum()){
+			//return -1;
+		}
+		else{
+		
+			try{
+				
+				Class.forName(DB_DRIVER);
 
-			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+				conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
 		
-			String insert = "INSERT INTO HotelReservations " +
+				String insert = "INSERT INTO HotelReservations " +
 							"(HotelId, CheckInDate, CheckOutDate, " +
 							"NumberOfRooms, ReservationNumber, UserId, "+
 							"Status, Notes, RoomTypeId) VALUES " + 
 							"(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			
-			ps = conn.prepareStatement(insert);
-			
-			ps.setInt(1, h.getHotelId());
-			ps.setDate(2, (Date)h.getCheckInDate());
-			ps.setDate(3, (Date)h.getCheckOutDate());
-			ps.setInt(4, h.getNumRooms());
-			ps.setString(5, h.getReservationNum());
-			ps.setInt(6, h.getUserId());
-			ps.setInt(7, h.getStatus());
-			ps.setString(8, h.getNotes());
-			ps.setInt(9, h.getRoom().getId());
+				ps = conn.prepareStatement(insert);
+				String resNum = generateReservationNum(12);
+				ps.setInt(1, h.getHotelId());
+				ps.setDate(2, (Date)h.getCheckInDate());
+				ps.setDate(3, (Date)h.getCheckOutDate());
+				ps.setInt(4, h.getNumRooms());
+				ps.setString(5, resNum);
+				ps.setInt(6, h.getUserId());
+				ps.setInt(7, h.getStatus());
+				ps.setString(8, h.getNotes());
+				ps.setInt(9, h.getRoom().getId());
+				
+				decrementAvailableRooms(h.getRoom().getId(), h.getNumRooms());
 	
-			ps.executeUpdate();	
+				ps.executeUpdate();	
+			/*
+				String getId = "SELECT LAST_INSERT_ID()";
+				System.out.println(getId + " " + resNum);
+				ps = conn.prepareStatement(getId);
 			
-			String getId = "SELECT Id FROM HotelReservations " + 
-							"WHERE ReservationNumber = ?";
+				ResultSet rs = ps.executeQuery(getId);
 			
-			ResultSet rs = ps.executeQuery(getId);
+				rs.next();
 			
-			rs.next();
-			
-			newHotelReservationId = rs.getInt("Id");
-		
-		}catch(Exception e){
-			e.printStackTrace();
-			System.out.println("Connection Error");
-		}finally{
-			
-			try {
-				if(ps != null){
-					ps.close();
-				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+				newHotelReservationId = rs.getInt("Id");
+		*/
+			}catch(Exception e){
 				e.printStackTrace();
-			}
-			try {
-				if(conn != null){
+				System.out.println("Connection Error");
+			}finally{
+			
+				try {
+					if(ps != null){
+						ps.close();
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					if(conn != null){
 					conn.close();
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			
-		}
+			}
 		
-		return newHotelReservationId;
+		//	return newHotelReservationId;
+		}
 		
 	}
 	
@@ -1706,6 +1630,73 @@ Connection conn = null;
 		
 	}
 	
+	public CreditCard getCreditCardByCardNumber(String num){
+		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		CreditCard c = new CreditCard();
+		
+		String query = "SELECT * FROM CreditCards WHERE CreditCardNumber = ?";
+		
+		try
+		{
+			Class.forName(DB_DRIVER);
+			
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+			
+			ps = conn.prepareStatement(query);
+			
+			ps.setString(1, num);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			
+			
+			while(rs.next()){
+				
+				c.setId(rs.getInt("Id"));
+				c.setCardHolderName(rs.getString("CardHolderName"));
+				c.setCreditCardNumber(rs.getString("CreditCardNumber"));
+				c.setBalance(rs.getDouble("Balance"));
+				c.setCardNickname(rs.getString("CardNickname"));
+				c.setUserId(rs.getInt("UserId"));
+				c.setcVV(rs.getString("CVV"));
+				
+			}
+			
+			rs.close();
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+		
+		return c;
+		
+	}
+	
 	public void removeCreditCard(CreditCard c){
 		
 		Connection conn = null;
@@ -1769,7 +1760,18 @@ Connection conn = null;
 					
 				ps = conn.prepareStatement(delete);
 				ps.setInt(1, h.getId());
+				
 				ps.executeUpdate();
+				
+				incrementAvailableRooms(h.getRoom().getId(), h.getNumRooms());
+				
+				int numDays = DateHelper.diffInDays(h.getCheckInDate(), h.getCheckOutDate());
+				
+				User u = getUserById(h.getUserId());
+				
+				getUserCreditCards(u);
+				
+				Transaction.refund(u.getAllCreditCards().get(0), numDays*(h.getRoom().getPricePerNight())*h.getNumRooms());
 					
 		}catch(Exception e){
 			
@@ -2009,9 +2011,117 @@ public HotelReservation getReservationById(int id){
 	
 }
 	
-//TODO: addCreditcard
+private String generateReservationNum(int length){
+	
+	char[] chars = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789".toCharArray();
+	
+	StringBuilder sb = new StringBuilder();
+	
+	Random random = new Random();
+	
+	for(int i = 0; i<length; i++){
+		char c = chars[random.nextInt(chars.length)];
+		sb.append(c);
+	}
+	return sb.toString();
+}
+
+private void decrementAvailableRooms(int id, int numRooms){
+Connection conn = null;
+	
+	PreparedStatement ps = null;
+	
+	String query = "UPDATE HotelRooms SET AvailableNumber = ? WHERE Id = ?";
+	
+	try
+	{
+		Class.forName(DB_DRIVER);
+		
+		conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+		
+		ps = conn.prepareStatement(query);
+		
+		ps.setInt(1, getHotelRoom(id).getAvailableNum() - numRooms);
+		
+		ps.setInt(2, id);
+		
+		ps.executeUpdate();
+		
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+	}
+	finally
+	{
+		try {
+			if(ps != null){
+				ps.close();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			if(conn != null){
+				conn.close();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
 	
 	
-//TODO: updateCreditcard
+}
+
+private void incrementAvailableRooms(int id, int numRooms){
+Connection conn = null;
+	
+	PreparedStatement ps = null;
+	
+	String query = "UPDATE HotelRooms SET AvailableNumber = ? WHERE Id = ?";
+	
+	try
+	{
+		Class.forName(DB_DRIVER);
+		
+		conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+		
+		ps = conn.prepareStatement(query);
+		
+		ps.setInt(1, getHotelRoom(id).getAvailableNum() + numRooms);
+		
+		ps.setInt(2, id);
+		
+		ps.executeUpdate();
+		
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+	}
+	finally
+	{
+		try {
+			if(ps != null){
+				ps.close();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			if(conn != null){
+				conn.close();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+	
+	
+}
 	
 }

@@ -3,6 +3,8 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page import="models.*" %>
 
+<c:set var="i" value="0" scope="page" />
+
 <t:layout>
 <h1>Your Reservations</h1>
 	<table class="table table-striped">
@@ -31,7 +33,8 @@
 					<c:out value="${hr.getNumRooms()}" />
 				</td>
 				<td>
-					<c:out value="${hr.getNumRooms()*hr.getRoom().getPricePerNight()}" />
+					<c:out value="${prices.get(i)}" />
+					<c:set var="i" value="${ i + 1 }" scope="page" />
 				</td>
 				<td>
 					<form action="CancelReservations" method="post">

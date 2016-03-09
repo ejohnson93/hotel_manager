@@ -178,6 +178,15 @@ public class User {
 		return this.creditCards.remove(c);
 	}
 	
+	public CreditCard getCreditCardByNumber(String num){
+		for(CreditCard c :  this.creditCards){
+			if(c.getCreditCardNumber().equals(num)){
+				return c;
+			}
+		}
+		return null;
+	}
+	
 	public void addReservation(HotelReservation h){
 		
 		this.reservations.add(h);

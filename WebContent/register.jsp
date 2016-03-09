@@ -1,18 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
-<% if (request.getAttribute("passError") != null){
-	Object passError = 	request.getAttribute("passError");
-	request.setAttribute("passError", passError);
-}
-if (request.getAttribute("nameTaken") != null){
-	Object nameTaken = 	request.getAttribute("nameTaken");
-	request.setAttribute("nameTaken", nameTaken);
-}
-if (request.getAttribute("emptyString") != null){
-	Object emptyString = 	request.getAttribute("emptyString");
-	request.setAttribute("emptyString", emptyString);
-}
-%>
 
 <t:layout>
 	<h1>Register here</h1>

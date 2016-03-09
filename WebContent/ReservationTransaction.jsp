@@ -9,7 +9,7 @@
 	Total Cost $${ totalPrice }
 	</div>
 	<div class="form-group">
-	<form action="ReservationTransactionConfirmation.jsp" method="post">
+	<form action="TransactionConfirmation" method="post">
 		<div>
 			<div>Cardholder First Name</div>
 			<input name="firstName" type="text" />
@@ -64,12 +64,18 @@
 		</div>
 		<div>
 			<div>Billing Address</div>
-			<input name="bilAddress" type="text" />
+			<input name="billAddress" type="text" />
 		</div>
 		<br/>
 		<div>
 			<input type="submit" class="btn" value="Confirm Reservation"/> 
 		</div>
+		<input type="hidden" value="${ totalPrice }" name="price"/>
+		<input type="hidden" name="checkInDate" value="${ checkInDate }"/>
+		<input type="hidden" name="checkOutDate" value = "${ checkOutDate }" />
+		<input type="hidden" name="hotelId" value="${ hotel.getId() }" />
+		<input type="hidden" name="roomId" value="${ roomId }" />
+		<input type="hidden" name="numRooms" value="${ numRooms }" />
 	</form>
 	</div>
 	<br />

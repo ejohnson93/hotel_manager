@@ -2,7 +2,27 @@
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@taglib  prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page import="models.*" %>
+<%@page import="javax.servlet.jsp.*,
+				utilities.GzipUtilities,
+				java.io.*,
+				java.util.zip.*" %>
+				
+<%/*
+response.setContentType("text/html");
 
+PrintWriter pw;
+
+if(GzipUtilities.isGzipSupported(request) &&
+		!GzipUtilities.isGzipDisabled(request)){
+	response.setHeader("Content-Encoding", "gzip");
+	pw = GzipUtilities.getGzipWriter(response);
+	
+	out.print(pw);
+	
+}else{
+	pw = new PrintWriter(response.getOutputStream(), false);
+}*/		
+%>
 <t:layout>
 	<table class="table table-striped">
 		<thead>
@@ -66,6 +86,8 @@
 						<input type="submit" class="btn" value="View and Book"/>
 						<input type="hidden" name="roomId" value=${ room.getId() } />
 						<input type="hidden" name="numRooms" value ="${ requestRooms }" />
+						<input type="hidden" name="checkInDate" value="${ checkInDate }"/>
+						<input type="hidden" name="checkOutDate" value = "${ checkOutDate }" />
 					</form>
 				</td>
 			</tr>
