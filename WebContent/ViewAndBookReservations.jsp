@@ -14,6 +14,8 @@
 		<input type="text" name="numRooms" value="${ requestRooms }" />
 		<input type="submit" class="btn" value="Book"/>
 		<input type="hidden" name="roomId" value="${ hotel.getHotelRoomByIndex(0).getId() }" />
+		<input type="hidden" name="checkInDate" value="${ checkInDate }"/>
+		<input type="hidden" name="checkOutDate" value ="${ checkOutDate }" />
 	</form>
 	 <button class="btn" onclick="goBack()">Go Back</button>
 

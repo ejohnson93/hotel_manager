@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class DatabaseManager {
 	
@@ -949,12 +950,12 @@ public class DatabaseManager {
 							"(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			
 			ps = conn.prepareStatement(insert);
-			
+			String resNum = generateReservationNum(12);
 			ps.setInt(1, h.getHotelId());
 			ps.setDate(2, (Date)h.getCheckInDate());
 			ps.setDate(3, (Date)h.getCheckOutDate());
 			ps.setInt(4, h.getNumRooms());
-			ps.setString(5, h.getReservationNum());
+			ps.setString(5, resNum);
 			ps.setInt(6, h.getUserId());
 			ps.setInt(7, h.getStatus());
 			ps.setString(8, h.getNotes());
@@ -964,6 +965,9 @@ public class DatabaseManager {
 			
 			String getId = "SELECT Id FROM HotelReservations " + 
 							"WHERE ReservationNumber = ?";
+			ps = conn.prepareStatement(getId);
+			
+			ps.setString(1, resNum);
 			
 			ResultSet rs = ps.executeQuery(getId);
 			
@@ -1706,6 +1710,73 @@ Connection conn = null;
 		
 	}
 	
+	public CreditCard getCreditCardByCardNumber(String num){
+		
+		Connection conn = null;
+		
+		PreparedStatement ps = null;
+		
+		CreditCard c = new CreditCard();
+		
+		String query = "SELECT * FROM CreditCards WHERE CreditCardNumber = ?";
+		
+		try
+		{
+			Class.forName(DB_DRIVER);
+			
+			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
+			
+			ps = conn.prepareStatement(query);
+			
+			ps.setString(1, num);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			
+			
+			while(rs.next()){
+				
+				c.setId(rs.getInt("Id"));
+				c.setCardHolderName(rs.getString("CardHolderName"));
+				c.setCreditCardNumber(rs.getString("CreditCardNumber"));
+				c.setBalance(rs.getDouble("Balance"));
+				c.setCardNickname(rs.getString("CardNickname"));
+				c.setUserId(rs.getInt("UserId"));
+				c.setcVV(rs.getString("CVV"));
+				
+			}
+			
+			rs.close();
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				if(ps != null){
+					ps.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+		
+		return c;
+		
+	}
+	
 	public void removeCreditCard(CreditCard c){
 		
 		Connection conn = null;
@@ -2009,9 +2080,19 @@ public HotelReservation getReservationById(int id){
 	
 }
 	
-//TODO: addCreditcard
+private String generateReservationNum(int length){
 	
+	char[] chars = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789".toCharArray();
 	
-//TODO: updateCreditcard
+	StringBuilder sb = new StringBuilder();
+	
+	Random random = new Random();
+	
+	for(int i = 0; i<length; i++){
+		char c = chars[random.nextInt(chars.length)];
+		sb.append(c);
+	}
+	return sb.toString();
+}
 	
 }

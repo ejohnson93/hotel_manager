@@ -68,6 +68,14 @@ public class ViewAndBook extends HttpServlet {
 		
 		request.setAttribute("totalPrice", roundedPrice);
 		
+		request.setAttribute("roomId", request.getParameter("roomId"));
+		
+		request.setAttribute("checkInDate", request.getParameter("checkInDate"));
+		
+		request.setAttribute("checkOutDate", request.getParameter("checkOutDate"));
+		
+		request.setAttribute("numRooms", numRooms);
+		
 		RequestDispatcher rd = request.getRequestDispatcher("ReservationTransaction.jsp");
 		rd.forward(request, response);
 		

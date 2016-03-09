@@ -57,6 +57,11 @@ public class ReservationSearchResults extends HttpServlet {
 		
 		request.setAttribute("hotel", h);
 		
+		request.setAttribute("checkInDate", request.getParameter("checkInDate"));
+		request.setAttribute("checkOutDate", request.getParameter("checkOutDate"));
+		
+		request.setAttribute("roomId", roomId);
+		
 		request.setAttribute("requestRooms", numRooms);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("ViewAndBookReservations.jsp");

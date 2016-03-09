@@ -103,22 +103,13 @@ public class ReservationSearchQuery extends HttpServlet {
 			}
 		}
 		
+		request.setAttribute("checkInDate", checkInDate);
+		request.setAttribute("checkOutDate", checkOutDate);
+
+		
 		request.setAttribute("hotels", hotels);
 		
 		request.setAttribute("requestRooms", numRooms);
-		
-		response.setContentType("text/html");
-		
-		PrintWriter out;
-		
-		if(GzipUtilities.isGzipSupported(request) &&
-				!GzipUtilities.isGzipDisabled(request)){
-			out = GzipUtilities.getGzipWriter(response);
-			response.setHeader("Content-Encoding", "gzip");
-			
-		}else{
-			out = response.getWriter();
-		}
 		
 		RequestDispatcher rd = request.getRequestDispatcher("ReservationSearchResults.jsp");
 		rd.forward(request, response);
