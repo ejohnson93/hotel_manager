@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import models.HotelReservation;
 import utilities.DatabaseManager;
+import utilities.DateHelper;
 
 /**
  * Servlet implementation class CancelReservations
@@ -41,6 +42,16 @@ public class CancelReservations extends HttpServlet {
 		HotelReservation hr = db.getReservationById(Integer.parseInt(hrid));
 		
 		request.setAttribute("hr", hr);
+		
+		double totalPrice = hr.getRoom().getPricePerNight() * hr.getNumRooms() * DateHelper.diffInDays(hr.getCheckInDate(), hr.getCheckOutDate());
+		
+		totalPrice = totalPrice * 100;
+		
+		double roundedPrice = (int)totalPrice;
+		
+		roundedPrice /= 100;
+		
+		request.setAttribute("price", roundedPrice);
 		
 		request.getRequestDispatcher("CancelReservations.jsp").forward( request, response);
 		

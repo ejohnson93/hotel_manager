@@ -14,7 +14,7 @@
 </ul>
 
  <ul class="nav-bar">
-  <li><a href="CustomerHomePage.jsp">Home</a></li>
+  <li><a href="CustomerHomePage">Home</a></li>
    <% if(request.getSession().getAttribute("username") != null){ %>
   <li><a href="ManageReservations">Manage Reservations</a></li>
   <% } %>

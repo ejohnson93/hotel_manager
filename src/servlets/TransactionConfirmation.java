@@ -103,24 +103,31 @@ public class TransactionConfirmation extends HttpServlet {
 				hr.setCheckInDate(checkInDate);
 				hr.setCheckOutDate(checkOutDate);
 				
+				synchronized(db) {
+				
 				db.addHotelReservation(hr);
 				
-				request.getRequestDispatcher("ReservationTransactionConfirmation.jsp").forward(request, response);
+				}
+				
+				//request.getRequestDispatcher("ReservationTransactionConfirmation.jsp").forward(request, response);
 			}
 			else if(status == CARD_STATUS.INVALID){
 				System.out.println("Invalid");
-				request.getRequestDispatcher("ReservationTransaction.jsp").forward(request, response);
+				request.setAttribute("error", "Invalid Credit Card Information");
+			//	request.getRequestDispatcher("ReservationTransaction.jsp").forward(request, response);
 			}
 			else if(status == CARD_STATUS.BAD_FUNDS){
 				System.out.println("Bad Funds");
-				request.getRequestDispatcher("ReservationTransaction.jsp").forward(request, response);
+				request.setAttribute("error", "Insufficient Funds");
+			//	request.getRequestDispatcher("ReservationTransaction.jsp").forward(request, response);
 			}
 		}else{
 			System.out.println("Bad DATE");
-			request.getRequestDispatcher("ReservationTransaction.jsp").forward(request, response);
+			request.setAttribute("error", "Card Expired");
+			//request.getRequestDispatcher("ReservationTransaction.jsp").forward(request, response);
 		}
 		
-		
+		request.getRequestDispatcher("ReservationTransactionConfirmation.jsp").forward(request, response);	
 		
 		
 	}

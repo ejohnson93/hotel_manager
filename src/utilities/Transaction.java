@@ -52,5 +52,17 @@ public class Transaction {
 		return CARD_STATUS.VALID;
 		
 	}
+	
+	public static void refund(CreditCard c, double amount){
+		
+		DatabaseManager db = new DatabaseManager();
+		
+		CreditCard card = db.getCreditCardByCardNumber(c.getCreditCardNumber());
+		
+		card.setBalance(card.getBalance() + amount);
+		
+		db.updateCreditCard(card);
+		
+	}
 
 }

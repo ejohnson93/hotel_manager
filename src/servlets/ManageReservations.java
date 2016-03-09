@@ -1,6 +1,7 @@
 package servlets;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -13,6 +14,7 @@ import models.Hotel;
 import models.HotelReservation;
 import models.User;
 import utilities.DatabaseManager;
+import utilities.DateHelper;
 
 /**
  * Servlet implementation class ManageReservations
@@ -51,14 +53,21 @@ public class ManageReservations extends HttpServlet {
 		
 		db.getUserReservations(u);
 		
+		List<Double> prices = new ArrayList<Double>();
 		for(HotelReservation h: u.getAllReservations()){
 			Hotel hotel = db.getHotel(h.getHotelId());
 			h.setHotel(hotel);
+			double price = (h.getNumRooms() * DateHelper.diffInDays(h.getCheckInDate(), h.getCheckOutDate()) * h.getRoom().getPricePerNight());
+			price = price * 100;
+			double roundedPrice = (int)price;
+			roundedPrice /= 100;
+			prices.add(roundedPrice);
 		}
 		
 		List<HotelReservation> hr = u.getAllReservations();
 		
 		request.setAttribute("hrList", hr);
+		request.setAttribute("prices", prices);
 		
 		request.getRequestDispatcher("ManageReservations.jsp").forward( request, response);
         return;

@@ -40,43 +40,9 @@ public class Register extends HttpServlet {
     
     public void init () throws ServletException {
     	serverStartDate = new Date();
-		loadProp();
+
     }
-    
-    private void loadProp(){
-	    FileInputStream fis = null;
-		
-		sc = this.getServletContext();
-		/* Store the user.properties file in the WEB-INF directory.
-		   Relative path is converted into the absolute path. */
-		propFilePath = sc.getRealPath("/WEB-INF/users.properties");
-	/*	
-		try{
-			fis = new FileInputStream(propFilePath);
-	
-		    prop.load(fis); 
-		    
-		} catch (FileNotFoundException e) {
-	
-		    System.out.println("FileNotFound");
-	
-		} catch (IOException e) {
-	
-		    System.out.println("IOEXCeption");
-	
-		} finally {
-	
-		    if (fis != null) {
-		        try {
-		            fis.close();
-		        }
-		        catch (Exception e) {
-	
-		            e.printStackTrace();
-		        }
-		    }
-		}*/
-    }
+
     
 
 	/**
@@ -113,7 +79,6 @@ public class Register extends HttpServlet {
 				boolean success = dbManager.addUser(user);
 				
 				if (success) {
-					loadProp();
 					response.sendRedirect("login.jsp");
 				} else {
 					request.setAttribute("nameTaken", "*Username was already taken, please try another one!"); 

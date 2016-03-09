@@ -14,7 +14,7 @@
 			<c:out value="${hr.getNumRooms()} Rooms" />
 		</div>
 		<div>
-			<c:out value="Total: ${hr.getNumRooms()*hr.getRoom().getPricePerNight()}" />
+			<c:out value="Total: ${price}" />
 		</div>
 	</div>
 	<form action="ReservationCancellationConfirmation" method="post">

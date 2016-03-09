@@ -31,7 +31,7 @@ public class Login extends HttpServlet {
         super();
     }
     
-    Properties prop = new Properties();
+//    Properties prop = new Properties();
     String propFilePath;
     Date serverStartDate = null;
     
@@ -88,8 +88,6 @@ public class Login extends HttpServlet {
 		DatabaseManager dbManager = new DatabaseManager();
 		
 		VALIDATE v = dbManager.validateUser(user);
-
-	    //VALIDATE v = user.validateUser(prop);
 
 		if(v == VALIDATE.VALID) {
 			session.setAttribute("username", name);
