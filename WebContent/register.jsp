@@ -9,7 +9,7 @@
 		Password: <input type="password" name="password"> <br></br>
 		Confirm Password: <input type="password" name="confirm"> <br></br>
 		<input type="hidden" name="matching"> <input type="button"
-			value="Submit" name="btnSubmit" onclick="validate()">
+			value="Submit" class="btn" name="btnSubmit" onclick="validate()">
 	</form>
 	<p style="color: red;">${passError}</p>
 	<p style="color: red;">${nameTaken}</p>
