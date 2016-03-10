@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import models.CreditCard;
+import models.Hotel;
 import models.HotelReservation;
 import utilities.DatabaseManager;
 import utilities.Transaction;
@@ -103,11 +104,21 @@ public class TransactionConfirmation extends HttpServlet {
 				hr.setCheckInDate(checkInDate);
 				hr.setCheckOutDate(checkOutDate);
 				
+				String resNum = null;
 				synchronized(db) {
 				
-				db.addHotelReservation(hr);
+				resNum = db.addHotelReservation(hr);
 				
 				}
+				
+				Hotel h = new Hotel();
+				h = db.getHotel(hr.getHotelId());
+				
+				request.setAttribute("hotel", h);
+				request.setAttribute("reservation", hr);
+				request.setAttribute("resNum", resNum);
+				
+				request.setAttribute("price", Double.parseDouble(request.getParameter("price")));
 				
 				//request.getRequestDispatcher("ReservationTransactionConfirmation.jsp").forward(request, response);
 			}

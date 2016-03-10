@@ -843,7 +843,7 @@ public class DatabaseManager {
 		
 	}
 	
-	public void addHotelReservation(HotelReservation h){
+	public String addHotelReservation(HotelReservation h){
 		
 		Connection conn = null;
 		
@@ -852,9 +852,10 @@ public class DatabaseManager {
 		//int newHotelReservationId = -1;
 		
 		if(h.getNumRooms() > getHotelRoom(h.getRoom().getId()).getAvailableNum()){
-			//return -1;
+			return null;
 		}
 		else{
+			String resNum = null;
 		
 			try{
 				
@@ -869,7 +870,7 @@ public class DatabaseManager {
 							"(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			
 				ps = conn.prepareStatement(insert);
-				String resNum = generateReservationNum(12);
+				resNum = generateReservationNum(12);
 				ps.setInt(1, h.getHotelId());
 				ps.setDate(2, (Date)h.getCheckInDate());
 				ps.setDate(3, (Date)h.getCheckOutDate());
@@ -918,7 +919,7 @@ public class DatabaseManager {
 			
 			}
 		
-		//	return newHotelReservationId;
+			return resNum;
 		}
 		
 	}

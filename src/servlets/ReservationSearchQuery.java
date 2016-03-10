@@ -74,7 +74,7 @@ public class ReservationSearchQuery extends HttpServlet {
 		}
 		
 		String city = request.getParameter("city");
-		int numRooms = 0;
+		int numRooms = 1;
 		try{
 		numRooms = Integer.parseInt(request.getParameter("numRooms"));
 		}

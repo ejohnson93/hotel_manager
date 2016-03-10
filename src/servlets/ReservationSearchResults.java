@@ -64,6 +64,10 @@ public class ReservationSearchResults extends HttpServlet {
 		
 		request.setAttribute("requestRooms", numRooms);
 		
+		if((String)request.getSession().getAttribute("username") == null){
+			request.setAttribute("notLoggedIn", "You must be logged in to book a reservation");
+		}
+		
 		RequestDispatcher rd = request.getRequestDispatcher("ViewAndBookReservations.jsp");
 		rd.forward(request, response);
 	}
