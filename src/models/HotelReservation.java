@@ -14,6 +14,7 @@ public class HotelReservation {
 	private String notes;
 	private HotelRoom room;
 	private Hotel hotel;
+	private boolean paidFor;
 
 	public HotelReservation() {
 
@@ -105,6 +106,14 @@ public class HotelReservation {
 
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
+	}
+
+	public boolean isPaidFor() {
+		return paidFor;
+	}
+
+	public void setPaidFor(boolean paidFor) {
+		this.paidFor = paidFor;
 	}
 
 }

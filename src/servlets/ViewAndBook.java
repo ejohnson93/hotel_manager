@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.RequestDispatcher;
@@ -12,7 +14,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import models.Amenity;
 import models.Hotel;
+import models.HotelReservation;
 import models.HotelRoom;
 import utilities.DatabaseManager;
 import utilities.DateHelper;
@@ -44,78 +48,52 @@ public class ViewAndBook extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		int roomId = Integer.parseInt(request.getParameter("roomId"));
-		int numRooms = Integer.parseInt(request.getParameter("numRooms"));
+		
+		boolean allAvailable = true;
+		
+		String[] hrIds = request.getParameterValues("idList");
+		String totalPrice = request.getParameter("totalPrice");
+		List<HotelReservation> hrList = new ArrayList<HotelReservation>();
+		List<Double> prices = new ArrayList<Double>();
 		
 		DatabaseManager db = new DatabaseManager();
 		
-		HotelRoom hr = db.getHotelRoom(roomId);
+		for(int i = 0; i < hrIds.length; i++){
+			
+			HotelReservation res = db.getReservationById(Integer.parseInt(hrIds[i]));
 		
-		Hotel h = db.getHotel(hr.getHotelId());
+			HotelRoom hr = db.getHotelRoom(res.getRoom().getId());
+			
+			Hotel h = db.getHotel(res.getHotelId());
+			
+			h.addRoom(hr);
+			
+			hrList.add(res);
+			Hotel hotel = db.getHotel(res.getHotelId());
+			res.setHotel(hotel);
+			double price = (res.getNumRooms() * DateHelper.diffInDays(res.getCheckInDate(), res.getCheckOutDate()) * res.getRoom().getPricePerNight());
+			price = price * 100;
+			double roundedPrice = (int)price;
+			roundedPrice /= 100;
+			prices.add(roundedPrice);
+			
+			if(res.getNumRooms() > hr.getAvailableNum()){
+				allAvailable = false;
+			}
 		
-		h.addRoom(hr);
+		}
 		
-		if(numRooms > hr.getAvailableNum()){
-			
-			request.setAttribute("hotel", h);
-			
-			request.setAttribute("checkInDate", request.getParameter("checkInDate"));
-			request.setAttribute("checkOutDate", request.getParameter("checkOutDate"));
-			
-			request.setAttribute("roomId", roomId);
-			
-			request.setAttribute("requestRooms", numRooms);
-			
-			request.setAttribute("error", "Not enough available rooms, the max available rooms is " + hr.getAvailableNum());
-			
-			RequestDispatcher rd = request.getRequestDispatcher("ViewAndBookReservations.jsp");
+		request.setAttribute("totalPrice", totalPrice);
+		request.setAttribute("prices", prices);
+		request.setAttribute("hrList", hrList);
+		
+		if (allAvailable){
+			RequestDispatcher rd = request.getRequestDispatcher("ReservationTransaction.jsp");
 			rd.forward(request, response);
 		}else{
-		
-		DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-		java.sql.Date checkInDate = null;
-		java.sql.Date checkOutDate = null;
-		
-		
-	//	System.out.println(request.getParameter("startDate"));
-		try {
-			checkInDate = new java.sql.Date(format.parse(request.getParameter("checkInDate")).getTime());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		try {
-			checkOutDate = new java.sql.Date(format.parse(request.getParameter("checkOutDate")).getTime());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		double totalPrice = hr.getPricePerNight() * numRooms * DateHelper.diffInDays(checkInDate, checkOutDate);
-		
-		totalPrice = totalPrice * 100;
-		
-		double roundedPrice = (int)totalPrice;
-		
-		roundedPrice /= 100;
-		
-		request.setAttribute("hotel", h);
-		
-		request.setAttribute("numRooms", numRooms);
-		
-		request.setAttribute("totalPrice", roundedPrice);
-		
-		request.setAttribute("roomId", request.getParameter("roomId"));
-		
-		request.setAttribute("checkInDate", request.getParameter("checkInDate"));
-		
-		request.setAttribute("checkOutDate", request.getParameter("checkOutDate"));
-		
-		request.setAttribute("numRooms", numRooms);
-		
-		RequestDispatcher rd = request.getRequestDispatcher("ReservationTransaction.jsp");
-		rd.forward(request, response);
+			request.setAttribute("insufficientRooms", "The rooms you have requested are no longer available, we're sorry!");
+			RequestDispatcher rd = request.getRequestDispatcher("ShoppingCart.jsp");
+			rd.forward(request, response);
 		}
 		
 	}
