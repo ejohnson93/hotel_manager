@@ -71,9 +71,16 @@
 	<servlet>
 		<description>
 		</description>
-		<display-name>TransactionConfirmation</display-name>
-		<servlet-name>TransactionConfirmation</servlet-name>
-		<servlet-class>servlets.TransactionConfirmation</servlet-class>
+		<display-name>UpdateReservationHistory</display-name>
+		<servlet-name>UpdateReservationHistory</servlet-name>
+		<servlet-class>servlets.UpdateReservationHistory</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>ShoppingCart</display-name>
+		<servlet-name>ShoppingCart</servlet-name>
+		<servlet-class>servlets.ShoppingCart</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Register</servlet-name>
@@ -108,8 +115,12 @@
 		<url-pattern>/ViewAndBook</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>TransactionConfirmation</servlet-name>
-		<url-pattern>/TransactionConfirmation</url-pattern>
+		<servlet-name>UpdateReservationHistory</servlet-name>
+		<url-pattern>/UpdateReservationHistory</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ShoppingCart</servlet-name>
+		<url-pattern>/ShoppingCart</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

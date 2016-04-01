@@ -4,12 +4,25 @@
 <%@page import="models.*" %>
 
 <t:layout>
-	<h3>${ hotel.getName() }</h3>
-	<div>
-	Total Cost $${ totalPrice }
+	<div id="success" style="display:none"><p>Reservation was Successful!!</p></div>
+	<div id="resInfo" >
+		<c:set var="i" value="0" scope="page" />
+		<c:forEach items="${hrList}" var="hr">
+			<h3><c:out value="${hr.getHotel().getName()}" /></h3>
+			<b>Price: </b><p>${ prices.get(i) }</p>
+			<b>Check in Date: </b><p>${ hr.getCheckInDate() }</p>
+			<b>Check out Date: </b><p>${ hr.getCheckOutDate() }</p>
+			<b>Reservation Number: </b><p>${ hr.getReservationNum() }</p>
+			<c:set var="i" value="${ i + 1 }" scope="page" />
+			<input type="hidden" value="${hr.getId()}" name="hrIds"/>
+		</c:forEach>
+		<b>Total Price: </b><p>$${ totalPrice }</p>
+		<input type="button" class="btn" value="Print" onclick="makePrintable('resInfo')" id="print" style="display:none"/>
 	</div>
-	<div class="form-group">
-	<form action="TransactionConfirmation" method="post">
+	<div id="error_div" style="color: red;"></div>
+	<div id="display" class="form-group">
+	<form id="this_form">
+		<h3>Payment Information</h3>
 		<div>
 			<div>Cardholder First Name</div>
 			<input name="firstName" type="text" />
@@ -68,14 +81,13 @@
 		</div>
 		<br/>
 		<div>
+			<div id="info" style="color: red; display:none;">
+				<p><b>Please wait wile the transaction is being processed...</b></p>
+				<p>Please do not close the page or hit any other buttons...</p>
+			</div>
 			<input type="submit" class="btn" value="Confirm Reservation"/> 
 		</div>
-		<input type="hidden" value="${ totalPrice }" name="price"/>
-		<input type="hidden" name="checkInDate" value="${ checkInDate }"/>
-		<input type="hidden" name="checkOutDate" value = "${ checkOutDate }" />
-		<input type="hidden" name="hotelId" value="${ hotel.getId() }" />
-		<input type="hidden" name="roomId" value="${ roomId }" />
-		<input type="hidden" name="numRooms" value="${ numRooms }" />
+		<input type="hidden" value="${totalPrice}" name="price"/>
 	</form>
 	</div>
 	<br />
@@ -85,5 +97,69 @@
 function goBack() {
     window.history.back();
 }
+
+$("#this_form").submit(function(event) {
+
+    event.preventDefault();
+    
+    var statusId = -1;
+    
+    $("#info").show();
+    $.post( "../Banking/BankingValidation", { name: $("#this_form div input[name=firstName]").val() + " " +  $("#this_form div input[name=lastName]").val(),
+    										 number: $("#this_form div input[name=cardNumber]").val(),
+    										 expMonth: $("#this_form div select[name=expMonth]").val(),
+    										 expYear: $("#this_form div select[name=expYear]").val(),
+    										 code: $("#this_form div input[name=securityCode]").val(),
+    										 price: $("#this_form input[name=price]").val()},
+    	function(data,status) {	
+		statusId = data;
+		}).done(function(){
+
+			if(statusId == 0){
+			$("#error_div").html("");
+			var idList = {'idList[]' : []};
+			$("input[name=hrIds]").each(function(){
+				idList['idList[]'].push($(this).val());
+			});
+			$.post("UpdateReservationHistory", idList).done(function(){
+					 $("#display").hide();
+					 $("#print").show();
+					 $("#success").show();
+					 $("#info").hide();
+				 });
+			}else if(statusId == 1){
+
+				$("#error_div").html("Insufficient funds");
+				$("#info").hide();
+			}
+			else if(statusId == 2){
+
+				$("#error_div").html("<p>Incorrect Credit Card information</p>");
+				$("#info").hide();
+			}
+			else if(statusId == 3){
+				$("#error_div").html("<p>Error, credit card expired</p>");
+				$("#info").hide();
+			}
+			
+		});
+    
+    
+  });
+  
+function makePrintable(id){
+	var html="<html>";
+	html += document.getElementById(id).innerHTML;
+	html +="</html>";
+	
+	var printWin = window.open('', '', 'left=0, top=0, width=' + window.innerWidth*2 + ', height =' + window.innerHeight*2 + ', toolbar=0,scrollbars=0, status=0');
+	
+	printWin.document.write(html);
+	printWin.document.close();
+	printWin.focus();
+	printWin.print();
+	printWin.close();
+}
+
 </script>
 </t:layout>
