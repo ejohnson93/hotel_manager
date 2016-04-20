@@ -2,7 +2,9 @@ package utilities;
 
 import models.*;
 import models.User.VALIDATE;
+import utilities.PasswordUtil;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -583,6 +585,16 @@ public class DatabaseManager {
 		
 		boolean success = false;
 		
+		String salt = PasswordUtil.getSalt();
+		
+		String hashedPassword = null;
+		try {
+			hashedPassword = PasswordUtil.hashPassword(u.getPassword() + salt);
+		} catch (NoSuchAlgorithmException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		try{
 			Class.forName(DB_DRIVER);
 			conn = DriverManager.getConnection(DB_CONNECTION,DB_USER,DB_PASSWORD);
@@ -590,7 +602,7 @@ public class DatabaseManager {
 			
 			String query = "SELECT * FROM Users " + 
 							"WHERE Username = ?";
-			System.out.println(query);
+			//System.out.println(query);
 
 			ps = conn.prepareStatement(query);
 			ps.setString(1, u.getUsername());
@@ -607,13 +619,14 @@ public class DatabaseManager {
 			rs.close();
 		
 					String insert = "INSERT INTO Users " +
-							"(Username, Password) VALUES " + 
-							"(?, ?)";
+							"(Username, Password, PasswordSalt) VALUES " + 
+							"(?, ?, ?)";
 			
 					ps = conn.prepareStatement(insert);
 			
 					ps.setString(1, u.getUsername());
-					ps.setString(2, u.getPassword());
+					ps.setString(2, hashedPassword);
+					ps.setString(3, salt);
 					ps.executeUpdate();	
 					success = true;
 
@@ -658,6 +671,10 @@ public class DatabaseManager {
 		
 		String pass = null;
 		
+		String salt = null;
+		
+		System.out.println("User Password: " + u.getPassword());
+		
 		try{
 			
 			Class.forName(DB_DRIVER);
@@ -666,7 +683,7 @@ public class DatabaseManager {
 		
 			String query = "SELECT * FROM Users " + 
 							"WHERE Username = ?";
-			System.out.println(query);
+			//System.out.println(query);
 
 			ps = conn.prepareStatement(query);
 			ps.setString(1, u.getUsername());
@@ -677,6 +694,9 @@ public class DatabaseManager {
 			
 			if(rs != null){
 				pass = rs.getString("Password");
+				salt = rs.getString("PasswordSalt");
+				System.out.println("Password: " + pass);
+				System.out.println("Salt: " + salt);
 			}
 			
 			rs.close();
@@ -707,10 +727,19 @@ public class DatabaseManager {
 		if(pass == null){
 			return VALIDATE.NOTFOUND;
 		}else{
-			
-			if(pass.equals(u.getPassword())){
-				return VALIDATE.VALID;
-			}else{
+			System.out.println("User Password: " + u.getPassword());
+			try {
+				String hashed = PasswordUtil.hashPassword(u.getPassword() + salt);
+				System.out.println("Retrieved password: " + pass);
+				System.out.println("Hashed: " + hashed);
+				if(pass.equals(hashed)){
+					return VALIDATE.VALID;
+				}else{
+					return VALIDATE.INVALID;
+				}
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 				return VALIDATE.INVALID;
 			}
 			
@@ -723,6 +752,16 @@ public class DatabaseManager {
 		Connection conn = null;
 		
 		PreparedStatement ps = null;
+		
+		String salt = PasswordUtil.getSalt();
+			
+		String hashedPassword = null;
+		try {
+			hashedPassword = PasswordUtil.hashPassword(u.getPassword() + salt);
+		} catch (NoSuchAlgorithmException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		try{
 			
@@ -741,7 +780,8 @@ public class DatabaseManager {
 							"Type = ?, " + 
 							"Status = ?, " + 
 							"Username = ?, " + 
-							"Password ? " + 
+							"Password = ?, " +
+							"PasswordSalt = ? " +
 							"WHERE Id = ?";
 	
 			ps = conn.prepareStatement(update);
@@ -755,8 +795,9 @@ public class DatabaseManager {
 			ps.setInt(8, u.getType());
 			ps.setInt(9, u.getStatus());
 			ps.setString(10, u.getUsername());
-			ps.setString(11, u.getPassword());
-			ps.setInt(12, u.getId());
+			ps.setString(11, hashedPassword);
+			ps.setString(12, salt);
+			ps.setInt(13, u.getId());
 	
 			ps.executeUpdate();	
 		

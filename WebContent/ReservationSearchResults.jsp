@@ -7,22 +7,6 @@
 				java.io.*,
 				java.util.zip.*" %>
 				
-<%/*
-response.setContentType("text/html");
-
-PrintWriter pw;
-
-if(GzipUtilities.isGzipSupported(request) &&
-		!GzipUtilities.isGzipDisabled(request)){
-	response.setHeader("Content-Encoding", "gzip");
-	pw = GzipUtilities.getGzipWriter(response);
-	
-	out.print(pw);
-	
-}else{
-	pw = new PrintWriter(response.getOutputStream(), false);
-}*/		
-%>
 <t:layout>
 	<table class="table table-striped">
 		<thead>
@@ -57,27 +41,27 @@ if(GzipUtilities.isGzipSupported(request) &&
 			<c:forEach items="${hotel.getAllHotelRooms()}" var = "room" >
 			<tr>
 				<td>
-					${hotel.getName()}
+					<c:out value="${hotel.getName()}"/>
 				</td>
 				<td>
-					${hotel.getAddress()}
+					<c:out value="${hotel.getAddress()}"/>
 				</td>
 				<td>
-					${hotel.getDescription() }
+					<c:out value="${hotel.getDescription() }"/>
 				</td>
 				<td>
-					${room.getRoomType().getRoomType() }
+					<c:out value="${room.getRoomType().getRoomType() }"/>
 				</td>
 				<td>
-					${ hotel.getAverageHotelRating() }
+					<c:out value="${ hotel.getAverageHotelRating() }"/>
 				</td>
 				<td>
-					${room.getPricePerNight() }
+					<c:out value="${room.getPricePerNight() }"/>
 				</td>
 				<td>
 					<c:forEach items="${hotel.getAllAmenities() }" var="amenity">
 					
-						${amenity.getName()} <br />
+						<c:out value="${amenity.getName()}"/> <br />
 						
 					</c:forEach>
 				</td>

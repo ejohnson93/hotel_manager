@@ -4,11 +4,11 @@
 <%@page import="models.*" %>
 
 <t:layout>
-	<h3>${ hotel.getName() }</h3>
-	<p><b>Description:</b><br /> ${ hotel.getDescription() }</p>
-	<p><b>Address:</b> <br />${ hotel.getAddress() }</p>
-	<p><b>Points of interest:</b> <br />${ hotel.getNearestPoints()}</p>
-	<p><b>Room Type:</b> ${ hotel.getHotelRoomByIndex(0).getRoomType().getRoomType() }</p>
+	<h3><c:out value="${ hotel.getName() }"/></h3>
+	<p><b>Description:</b><br /> <c:out value="${ hotel.getDescription() }"/></p>
+	<p><b>Address:</b> <br /><c:out value="${ hotel.getAddress() }"/></p>
+	<p><b>Points of interest:</b> <br /><c:out value="${ hotel.getNearestPoints()}"/></p>
+	<p><b>Room Type:</b> <c:out value="${ hotel.getHotelRoomByIndex(0).getRoomType().getRoomType() }"/></p>
 	<p id="success" style="display:none">
 		This Reservation has successfully been added to your Shopping Cart!<br/>
 		Click "Check Out" to go to the shopping cart or click "New Search" to search for a new hotel
