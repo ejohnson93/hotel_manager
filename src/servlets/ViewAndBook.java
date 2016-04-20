@@ -49,6 +49,10 @@ public class ViewAndBook extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
+		if(SessionManager.validateSession(request, response) == 0){
+			return;
+		}
+		
 		boolean allAvailable = true;
 		
 		String[] hrIds = request.getParameterValues("idList");

@@ -7,8 +7,8 @@
 
 <t:layout>
     <h1>Welcome</h1>
-    
-<form action="ReservationSearchQuery" method="post">
+    <a href="ClientHomePage.jsp">Click here to view the Client Homepage</a>
+<form action="<c:url value='/ReservationSearchQuery' />" method="post">
 <div class="container">
 	<div class="col-sm-6" style="height:75px;">
 	   <div class='col-md-5'>
@@ -70,6 +70,7 @@
 </div>
 	
 </form>
+
 <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/js/bootstrap-datetimepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.min.css" />

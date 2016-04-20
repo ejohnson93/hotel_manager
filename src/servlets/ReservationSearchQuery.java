@@ -1,36 +1,40 @@
 package servlets;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import models.Amenity;
 import models.Hotel;
 import models.HotelRoom;
 import models.HotelRoomType;
-import models.User;
-import models.User.VALIDATE;
 import utilities.DatabaseManager;
-import utilities.GzipUtilities;
 
 /**
  * Servlet implementation class ReservationSearchQuery
  */
 public class ReservationSearchQuery extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	static Logger log 
+    = Logger.getLogger(ReservationSearchQuery.class.getName());
+	
+	
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -51,6 +55,13 @@ public class ReservationSearchQuery extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ServletContext sc = this.getServletContext();
+		String propFilePath = sc.getRealPath("/WEB-INF/lib/log4j.properties");
+		PropertyConfigurator.configure(propFilePath);
+		
+		if(SessionManager.validateSession(request, response) == 0){
+			return;
+		}
 		
 		DateFormat format = new SimpleDateFormat("MM/dd/yyy hh:mm a", Locale.ENGLISH);
 		java.sql.Date checkInDate = null;
@@ -79,7 +90,7 @@ public class ReservationSearchQuery extends HttpServlet {
 		numRooms = Integer.parseInt(request.getParameter("numRooms"));
 		}
 		catch(Exception e){
-			e.printStackTrace();
+			log.warn("This is a warn message: ", e);
 		}
 		
 		HotelRoomType roomType = new HotelRoomType();
