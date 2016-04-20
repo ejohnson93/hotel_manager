@@ -585,11 +585,11 @@ public class DatabaseManager {
 		
 		boolean success = false;
 		
-		String salt = PasswordUtil.getSalt();
+		//String salt = PasswordUtil.getSalt();
 		
 		String hashedPassword = null;
 		try {
-			hashedPassword = PasswordUtil.hashPassword(u.getPassword() + salt);
+			hashedPassword = PasswordUtil.hashPassword(u.getPassword());
 		} catch (NoSuchAlgorithmException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -619,14 +619,13 @@ public class DatabaseManager {
 			rs.close();
 		
 					String insert = "INSERT INTO Users " +
-							"(Username, Password, PasswordSalt) VALUES " + 
-							"(?, ?, ?)";
+							"(Username, Password) VALUES " + 
+							"(?, ?)";
 			
 					ps = conn.prepareStatement(insert);
 			
 					ps.setString(1, u.getUsername());
 					ps.setString(2, hashedPassword);
-					ps.setString(3, salt);
 					ps.executeUpdate();	
 					success = true;
 
@@ -671,7 +670,7 @@ public class DatabaseManager {
 		
 		String pass = null;
 		
-		String salt = null;
+		//String salt = null;
 		
 		System.out.println("User Password: " + u.getPassword());
 		
@@ -694,9 +693,7 @@ public class DatabaseManager {
 			
 			if(rs != null){
 				pass = rs.getString("Password");
-				salt = rs.getString("PasswordSalt");
-				System.out.println("Password: " + pass);
-				System.out.println("Salt: " + salt);
+				//salt = rs.getString("PasswordSalt");
 			}
 			
 			rs.close();
@@ -729,9 +726,7 @@ public class DatabaseManager {
 		}else{
 			System.out.println("User Password: " + u.getPassword());
 			try {
-				String hashed = PasswordUtil.hashPassword(u.getPassword() + salt);
-				System.out.println("Retrieved password: " + pass);
-				System.out.println("Hashed: " + hashed);
+				String hashed = PasswordUtil.hashPassword(u.getPassword());
 				if(pass.equals(hashed)){
 					return VALIDATE.VALID;
 				}else{
@@ -753,11 +748,11 @@ public class DatabaseManager {
 		
 		PreparedStatement ps = null;
 		
-		String salt = PasswordUtil.getSalt();
+		//String salt = PasswordUtil.getSalt();
 			
 		String hashedPassword = null;
 		try {
-			hashedPassword = PasswordUtil.hashPassword(u.getPassword() + salt);
+			hashedPassword = PasswordUtil.hashPassword(u.getPassword());
 		} catch (NoSuchAlgorithmException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -780,8 +775,7 @@ public class DatabaseManager {
 							"Type = ?, " + 
 							"Status = ?, " + 
 							"Username = ?, " + 
-							"Password = ?, " +
-							"PasswordSalt = ? " +
+							"Password = ? " +
 							"WHERE Id = ?";
 	
 			ps = conn.prepareStatement(update);
@@ -796,8 +790,7 @@ public class DatabaseManager {
 			ps.setInt(9, u.getStatus());
 			ps.setString(10, u.getUsername());
 			ps.setString(11, hashedPassword);
-			ps.setString(12, salt);
-			ps.setInt(13, u.getId());
+			ps.setInt(12, u.getId());
 	
 			ps.executeUpdate();	
 		
