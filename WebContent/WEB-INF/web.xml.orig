@@ -85,18 +85,15 @@
 	<servlet>
 		<description>
 		</description>
+<<<<<<< HEAD
 		<display-name>SessionManager</display-name>
 		<servlet-name>SessionManager</servlet-name>
 		<servlet-class>servlets.SessionManager</servlet-class>
-	</servlet>
-
-	<servlet>
-		<description>
-		</description>
+=======
 		<display-name>ManageAccount</display-name>
 		<servlet-name>ManageAccount</servlet-name>
 		<servlet-class>servlets.ManageAccount</servlet-class>
-	
+>>>>>>> dev_bryan
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Register</servlet-name>
@@ -139,12 +136,13 @@
 		<url-pattern>/ShoppingCart</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ManageAccount</servlet-name>
-		<url-pattern>/ManageAccount</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
+<<<<<<< HEAD
 		<servlet-name>SessionManager</servlet-name>
 		<url-pattern>/SessionManager</url-pattern>
+=======
+		<servlet-name>ManageAccount</servlet-name>
+		<url-pattern>/ManageAccount</url-pattern>
+>>>>>>> dev_bryan
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

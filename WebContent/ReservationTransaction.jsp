@@ -9,14 +9,14 @@
 		<c:set var="i" value="0" scope="page" />
 		<c:forEach items="${hrList}" var="hr">
 			<h3><c:out value="${hr.getHotel().getName()}" /></h3>
-			<b>Price: </b><p>${ prices.get(i) }</p>
-			<b>Check in Date: </b><p>${ hr.getCheckInDate() }</p>
-			<b>Check out Date: </b><p>${ hr.getCheckOutDate() }</p>
-			<b>Reservation Number: </b><p>${ hr.getReservationNum() }</p>
+			<b>Price: </b><p><c:out value="${ prices.get(i) }"/></p>
+			<b>Check in Date: </b><p><c:out value="${ hr.getCheckInDate() }"/></p>
+			<b>Check out Date: </b><p><c:out value="${ hr.getCheckOutDate() }"/></p>
+			<b>Reservation Number: </b><p><c:out value="${ hr.getReservationNum() }"/></p>
 			<c:set var="i" value="${ i + 1 }" scope="page" />
 			<input type="hidden" value="${hr.getId()}" name="hrIds"/>
 		</c:forEach>
-		<b>Total Price: </b><p>$${ totalPrice }</p>
+		<b>Total Price: </b><p>$<c:out value="${ totalPrice }"/></p>
 		<input type="button" class="btn" value="Print" onclick="makePrintable('resInfo')" id="print" style="display:none"/>
 	</div>
 	<div id="error_div" style="color: red;"></div>

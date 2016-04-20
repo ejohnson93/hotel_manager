@@ -26,6 +26,7 @@
   <c:choose>
    		<c:when test="${ sessionScope.username != null }">
 		  	<li><a>Hello, ${sessionScope.username }</a></li>
+		  	<li><a href="ManageAccount">Manage Account</a></li>
 		    <li><a href="Login">Logout</a></li>
 		</c:when>
 		<c:otherwise>
