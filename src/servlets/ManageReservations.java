@@ -37,6 +37,10 @@ public class ManageReservations extends HttpServlet {
 		// TODO Auto-generated method stub
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
 		
+		if(SessionManager.validateSession(request, response) == 0){
+			return;
+		}
+		
 		DatabaseManager db = new DatabaseManager();
 		
 		HttpSession session = request.getSession();

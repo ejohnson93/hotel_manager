@@ -7,22 +7,6 @@
 				java.io.*,
 				java.util.zip.*" %>
 				
-<%/*
-response.setContentType("text/html");
-
-PrintWriter pw;
-
-if(GzipUtilities.isGzipSupported(request) &&
-		!GzipUtilities.isGzipDisabled(request)){
-	response.setHeader("Content-Encoding", "gzip");
-	pw = GzipUtilities.getGzipWriter(response);
-	
-	out.print(pw);
-	
-}else{
-	pw = new PrintWriter(response.getOutputStream(), false);
-}*/		
-%>
 <t:layout>
 	<table class="table table-striped">
 		<thead>
@@ -82,7 +66,7 @@ if(GzipUtilities.isGzipSupported(request) &&
 					</c:forEach>
 				</td>
 				<td>
-					<form action="ReservationSearchResults" method="post">
+					<form action="<c:url value='/ReservationSearchResults' />" method="post">
 						<input type="submit" class="btn" value="View and Book"/>
 						<input type="hidden" name="roomId" value=${ room.getId() } />
 						<input type="hidden" name="numRooms" value ="${ requestRooms }" />
