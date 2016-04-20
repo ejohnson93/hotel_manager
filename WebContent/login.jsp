@@ -6,7 +6,7 @@
 	<p style="color: red;">${errorPass}</p>
 	<p style="color: red;">${errorUser}</p>
 	<form name="input" action="Login" method="post">
-		User name: <input type="text" name="username" value="${existingName}"> <br></br>
+		User name: <input type="text" name="username" value="${cookie.username.value}"> <br></br>
 		Password: <input type="password" name="password"> <br/>
 		<br/>
 		<input type="checkbox" name="remember"> Remember me on this computer<br/>

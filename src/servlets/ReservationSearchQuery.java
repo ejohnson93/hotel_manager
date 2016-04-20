@@ -75,6 +75,7 @@ public class ReservationSearchQuery extends HttpServlet {
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			log.error("Incorrect check in date format: ", e);
 		}
 		
 		try {
@@ -82,6 +83,7 @@ public class ReservationSearchQuery extends HttpServlet {
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			log.error("Incorrect check out date format: ", e);			
 		}
 		
 		String city = request.getParameter("city");
@@ -90,6 +92,7 @@ public class ReservationSearchQuery extends HttpServlet {
 		numRooms = Integer.parseInt(request.getParameter("numRooms"));
 		}
 		catch(Exception e){
+			e.printStackTrace();
 			log.warn("This is a warn message: ", e);
 		}
 		

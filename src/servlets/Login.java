@@ -42,16 +42,6 @@ public class Login extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.getSession().invalidate();
-		String cookieName = "username";
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
-			 for(int i=0; i<cookies.length; i++) {
-			 Cookie cookie = cookies[i];
-			 if (cookieName.equals(cookie.getName())){
-				 request.setAttribute("existingName", cookie.getValue());
-			 }
-		 }
-		} 
 		request.getRequestDispatcher("login.jsp").forward( request, response);
 	}
 
